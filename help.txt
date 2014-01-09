@@ -1,0 +1,963 @@
+ 
+             ************************************************
+             ***************** SuperMagnet ******************
+             ************************************************
+             ********        By Daniel White        *********
+
+       You can e-mail me at dspwhite@email.com or visit my website
+       (which contains a link to this program) at www.skytopia.com
+
+Welcome to SuperMagnet version 9, one of the purest programs you could
+expect to see for the Amiga. To have a glimpse on what SuperMagnet can do,
+take a look at the example animations included (make sure you press F1 once
+they're playing in Viewtek to see the animations at 50 frames per second).
+
+You will need AMOS Pro for all of the editing (the program is not
+executable) and just a touch of patience for me to tell you what it is (have
+you seen those anims yet?).
+
+The best way of describing what SuperMagnet does is to say that it
+manipulates an array of 'atoms' to create all sorts of effects. For example
+you could have a lovely stretchy bridge made up of, say, 20 atoms, with a
+giant ball of mini-magnets or 1 big magnet jumping on it. Or you could
+simulate a pipe system with water (hundreds of tiny magnets) running through
+it, all while being affected by gravity! Or maybe you could run a small
+scale solar system with the planets orbiting the sun (you could track any of
+the planets). Even a snooker table with real-world physics and friction. The
+possibilities really are endless. You are, in effect, creating a world of
+atoms all with their own individual properties. Take a look at the
+animations included for a glimpse at what you can do.
+
+This all may sound a little over-ambitious, but believe me, I'm not much of
+an expert when it comes to any scientific work. You hardly need a degree in
+mathematics to use this program. With some patience you could be creating
+your own fantastic projects.
+
+Even if you don't delve very deep into this what this program can do, I suggest
+you see the games I've done such as the incredibly frustrating 'TomatoPip' game
+or the intriguiging 'BalanceGame' or my favourite - the 'Jump' - a Stunt Car
+Racer-esque game. They really are a lot of fun and could be released as full PD
+games in their own right if I could be bothered. Try the TomatoPip game first
+since that doesn't require a fast machine to get going and it's the easiest game
+to understand. To load them in see info. below.
+
+The program takes a modular approach to save memory. You will first need to
+load any one of the example projects into AMOS and then MERGE the 'Template'
+beneath.
+
+What I suggest you do before any of this (unless you still want to try out
+those games!) is to simply load SuperMagnet itself.
+This program has the project data and the template merged into one and
+includes information on what each variable does etc..
+
+Load in SuperMagnet and I will give you a simple tour on what things do:
+(To refer to the doc, press LAmiga+A to swap screens from AMOS and back.)
+
+First of all run the program and you will see 3 magnets on the screen. Hit
+F2 and then try moving the mouse and you will move the currently selected
+magnet around (press minus on the keypad to select a different one (1,2 or
+3)). Now try the cursor keys to move the screen position around (press
+backspace to reset). Click the mouse buttons to zoom in or out.
+As you can see (better if you have a faster processor:), the magnets are
+behaving independently from each other. They are in a particular mode of
+equilibrium whereby if a certain magnet gets too far from the rest, it gets
+pulled back in, and if it gets too close, it's repelled away. After some
+time, they will come to rest and form a triangle. Now try moving the mouse
+around. I suggest at this point you press '/' on the keyboard and enter '-1'
+and hit return. The screen will now centre all objects on screen. Hit F3-F5
+for other mouse modes and watch how differently the mouse behaves.
+
+Finally, try pressing left or right bracket on the keypad for time to speed
+up or slow down. Now move the mouse around. Interesting huh? OK, now try
+pressing '/' or '*' on the keyPAD for different draw modes. SuperMagnet can
+do all this and much much more. Still interested? Read on - it gets even
+better!. (Oh and have you seen those anims yet?:))
+
+There are six basic types of magnetism which you can employ.
+Break the program (Ctrl+c) and press 'Right ALT' and cursor key down until
+you come to a line saying 'THE BASIC MAGNETICS' (you can't miss it!).
+
+1: Constant Attract:
+   Each magnet is pulled into the rest (of the magnets) at a constant speed
+   regardless of its distance.
+
+2: Constant Repel:
+   Each magnet is pulled away from the rest at a constant speed regardless
+   of its distance.
+
+3: Magnetic Attract:
+   Each magnet is attracted at a speed inversely proportional to the
+   distance of the others.
+
+4: Magnetic Repel:
+   Each magnet is repelled at a speed inversely proportional to the distance
+   of the others.
+
+NB. These two magnetic modes above (3 & 4), are like how real-world magnets
+would behave (the two combined in a special way also allow for a real atom
+building - more on that later).
+
+5: Proportional Attract:
+   Each magnet is attracted to the others at a speed proportional to the
+   distance.
+
+6: Proportional Repel:
+   Each magnet is repelled from the others at a speed proportional to the
+   distance.
+
+The 3 magnets that were seen earlier when the program was run were using the
+'Magnetic Repel (4)' & 'Proportional Attract (5)' modes to simulate 3
+pseudo-atoms interacting ('pseudo' since the further the two are away the
+more force they use to come back to each other - while the reverse is true
+for a real atom effect). If you take a look, you will see these are the only
+lines which do not have a ['] symbol at the beginning (lines starting with
+the ['] symbol of course mean that they are ignored by the program).
+Each mode has 4 lines of code. 2 lines are for the X axis of a particular
+magnet and 2 are for the Y, but more importantly, the XE# or YE# lines are
+the ones that have no momentum - giving the magnets a very 'pressurised'
+look, while the XCE# or YCE# lines give the magnets momentum allowing for
+effects such as smooth orbits, or real world physics. Both of them selected
+together allow for the effect of the magnets flowing smoothly initially, but
+then coming to a rest - as though they were losing energy from collision.
+At the moment, all four are selected in 'Magnetic Repel' (MR from now on)
+and all four in 'Proportional Attract' (PA from now on). Try quoting
+(putting the ['] symbol at the beginning of the lines) the XCE# and YCE# of
+both the 'MR' and 'PA' lines (4 in total) like this:-
+
+      '4: Magnetic Repel:  
+      XE#(M)=XE#(M)-ZX#/F#*X2#
+      YE#(M)=YE#(M)-ZY#/F#*Y2#
+      XCE#(M)=XCE#(M)-ZX#/F#*X2#   (quote this line)
+      YCE#(M)=YCE#(M)-ZY#/F#*Y2#   (and this)
+     End If 
+     '5: Proportional Attract:
+     XE#(M)=XE#(M)+ZX#*F#*X3#
+     YE#(M)=YE#(M)+ZY#*F#*Y3#
+     XCE#(M)=XCE#(M)+ZX#*F#*X3#    (also this)
+     YCE#(M)=YCE#(M)+ZY#*F#*Y3#    (and this)
+
+
+Before you read further, press '/' on the keyboard and enter '-1' to centre
+all magnets on screen.
+To get them faster moving, decrease the accuracy (time-step) by keeping down
+the right bracket on the keypad until a value of around 25 is reached. Now
+press F2 and try moving the mouse around. You should notice how differently
+the magnets react compared to when you tried before. The accuracy controlled
+by the variable 'MP#' acts as a slow-motion or speed-up factor. The greater
+the number, the greater the time slice between each frame. If you want to
+enter the time factor directly, press '9' on the KEYpad. Here you can type
+in any value you wish and time will flow accordingly. Goodness, you can even
+enter a negative number and time will go backwards perfectly, proving how
+universal the time factor is and also proving I programmed it competently;).
+Entering 0 will obviously make time freeze. Simpler though is to press 'p'
+to pause the program (If you want to start the program in pause mode
+initially, set the variable 'P' near the beginning of the program to 0).
+Then you are asked if you want the frame skip to match the time step....
+...I suggest you skip this part and come back to it later, since there are
+more fundamental things to discuss (go to the nearest set of stars).
+
+What this means is that if you halve the time step so that time goes slower,
+saying yes to this means that the amount of frames that are skipped will
+double. e.g.
+
+Originally:                          MP#=0.5   K#=4
+
+"Time step from 0.5 to "	       Input '0.25'
+"Adjust frame skip to time change?"  Inputting 'y' will change K# to 8
+                                     Inputting 'n' will keep K# at 4
+Saying yes will allow for example to create seamless animations: Say you
+want to increase the MP# variable so that time will go faster - therefore
+getting through the animation quicker (obviously don't go too fast though
+because of warp core breach), if the MP# variable changed without the K#
+variable also changing (that's saying 'no' to the adjust), you would end
+up with an anim first playing quick, then playing twice as slow.
+So in a nutshell saying yes (to the adjust part) means here that although
+everthing's going twice as slow, only pics every second frame are getting
+saved. Hope that's clear!
+
+*****************************************************
+
+Now, feel free to experiment with all of the different modes (by quoting and
+unquoting) to get a feel for what each one does. Try each of the six
+starting with the mode 'Constant Attract'.
+
+*****************************************************
+************ The template/module system *************
+*****************************************************
+Now is as good as time as any to explain how the template system works:-
+If you wanted, you could modify and save the whole of SuperMagnet for every
+project you do. Far better though is to save only the data that you need to.
+All of my modules in the modules drawer are done this way, saving memory and
+compacting the information into one chunk. Once you've loaded in a module,
+you then just need to merge the template in beneath. The 'Data' file is what
+you can use to make your own modules. It contains all the raw info that the
+template recognises. You can then add what features you want to make a new
+module. Indeed, in itself it IS just a 'bare bones' module (3 magnets in MR
+and PA mode).
+Simply put, 'SuperMagnet' is simply the 'Data' (or modules) and 'Template'
+rolled into one!
+NB. For your own projects, if you can't be bothered to merge the template in
+after loading in a module, you can use AMOS's 'Include' command, but make
+sure you set the path towards the template. e.g.
+Include "HD1:AMOS/template'
+(Insert line at the end of module data)
+
+Anyway, the short data code contains all the info and stuff on what's going
+to happen. Everything that made the classic mincer animation (that I'm sure
+you've seen by now) is in this relatively short piece of code.
+It's made up of various compartments which can gotten to by presssing ALT
+and cursor-down to (standard AMOS procedure to get to next part)
+      Anyway...
+First up is all the start-up variables. See soon for more info.
+
+Next up is all the PROPERTIES that are assigned to each magnet initially
+  such as the defence, attack, size, time start - that sort of thing (read
+  later for more info.) Note that all these factors can be changed DURING
+  the run of the program (via keyboard on the fly or a script in the code).
+
+Third, we have the POSITION values - this maybe should be joined with the
+  PROPERTIES section, since the position is really another property of a
+  magnet. I decide to seperate them though, since it can take quite some
+  code to build up the various positions of the magnets etc.
+
+Fourth, there is the PALette and screen control section. Once again, this is
+  explained in more depth later on.
+
+Fifth is the part you should already know about - the MAGNET section. This
+  is where it all happens. Magnets are flung about, attracted, repelled,
+  gravitised - you name it. Even more detail on all this later.
+
+And sixth is the EXTRA section where you can create a script. See the
+'mincer' module for good examples of how the blade rotates etc.
+More on this later. Note that you can write some of the script in the MAGNET
+section if you want to. But this is where it's meant to go. There is one
+advantage in writing it here too. The snooker project for example draws a
+bar to represent the green table. The balls are then placed on TOP. If you
+wrote the script in the MAGNET section, the balls would be overwritten by
+the table (since it comes later in the code - the EXTRA section comes
+earlier).
+The EXTRA section is also the perfect place to start something moving at a
+ceratin time (- for example the white ball on the 'snooker' module).
+Anything can be done here.
+
+
+***********************************************************************
+********************* What all those variables do *********************
+***********************************************************************
+The variables at the very top of the code are values relating to the
+functions of SuperMagnet. Aswell as being ables to be set from the start,
+a lot of them can be controlled in program through use of the keyboard.
+The number keys '7' & '8', '4' & '5' and '1' & '2' on the keypad for
+example control the MA and PA values etc.
+***********************************************************************
+
+Let's start with the first variable - 'O':
+You can easily change the number of magnets to more (or less) by altering
+the amount of 'objects' using the variable 'O'. This is near the top of the
+listing. Run the program with 2 or maybe 10 objects. If the speed at which
+each frame changes is too slow to view (and for projects involving any more
+than about 20 magnets, it certainly will be!), there is a save function
+(change variable S$ to "y") which saves the frames as IFFs to RAM: to be
+played later by 'FramePlay' - another program I have included (more on that
+later). Set the number of frames with the 'F' variable.
+
+See information on colours (variable 'CL') later.
+
+Having 'Trail' selected (change variable 'TR$' to ='y' instead of 'n') will
+stop the screen swapping routine, thus drawing everything onto 1 screen.
+Press 'Del' to clear the screen anytime. This function is useful for
+plotting paths and therefore is recommended for use in conjunction with
+setting the 'Display' (variable 'D') to 1 to get a plot draw (instead of
+circles representing the magnets).
+
+The variable 'T' gives info. on what's happening on screen. A value of 0
+gives no information. Or you can press the space bar and input a number from
+1 to 16 to display certain information while the program is in use. A value
+higher than 16 will inform you of what they do. Even while the program is
+paused, you can still access information. See later for guide on information
+types.
+
+'Active' (variable 'A$') means that you cannot use any of the keys during
+play. This is primarily to avoid any keyboard interference when you switch
+back to Workbench and type whilst a project is rendering in SuperMagnet. It
+is also speeds up the program a little. You can toggle it on or off while
+the program is running by pressing Ctrl & '. However if you've set a$ to "l"
+in the first place, you'll find a requester popping up when you first run
+SuperMagnet. It expects you to load in data saved previously by pressing
+F10. You can also summon this load requester by pressing F9 during play.
+On top of this, if you set a$ to "n", then the info (called "Ram:DataEnd"
+will be saved automatically every frame. If the machine happens to crash,
+you can then simply load it all up again, load in the module, set the
+variable a$ to "l", and it will continue where it left off. For the purposes
+described above, I suggest you use some kind of ram util that keeps stuff in
+RAM: even when the machine has crashed. I use the excellent StatRAM utility.
+
+The accuracy or time-step (variable 'MP#') as explained earlier controls the
+time slice between frames. Set this number too high and chaos will surely
+ensue since it's calculating too much too quickly and magnets are going into
+explosion (WCB!). A wild example is that if you had a processor 1,000,000 x
+faster than a 68060, you would have this number very low indeed (allowing
+for great accuracy as well as everything not going TOO fast!!). A safe bet
+is to have this number fairly low and increase it gradually until just
+before WCB (Warp core breach) sets in! The bracket keys on the keypad lessen
+and greaten the speed. Oh and by the way, I can't express how good even a
+1,000 times the speed of my A1200 would improve SuperMagnet! (Indeed, the
+animations included would not have to be animations at all, but modules
+loaded in and rendered on the spot in real-time with full control of the
+mouse and other controls; see the colour comet animation and then imagine
+for one moment flying the comet into the planet yourself using the mouse!).
+You can set this on the fly by pressing keypad 9. After setting the MP#, it
+also asks whether you want the frameskip adjusted. For more information on
+this, read the text immediately below to learn more about what the frameskip
+does and then read the section earlier in this doc which told you to 'skip'
+it until later.
+
+Before I explain how the save mode works, let me explain what the variable
+'K#' does. Setting 'K#' to a value of 3 will mean that only every third
+frame will be drawn and shown. This means that no unnecessary time is wasted
+drawing frames that you won't want seen. Think of it like the frame skip in
+MagiC64. It also means that only every third frame will be saved (if save is
+active). Default is 1 meaning that every frame will be shown (and saved if
+save is on). Also, pressing keypad 6 will allow you to enter how many frames
+to skip on the fly while the program is running.
+
+When 'Save' is selected (S$="y" or S$="s" instead of S$="n") all frames will
+be saved every 'K#' times. Frames are saved to RAM (or wherever) in
+ascending number form.
+If S$="y" then the frames will be saved like this:-
+'Pic.0000', 'Pic.0001', 'Pic.0002', 'Pic.0003',...'Pic.0017', 'Pic.0018' etc.
+The frames need to be saved like this if you want to load them into
+'Personal Paint' for an anim.
+On the other hand, setting S$ to "s" (or any other key actually) will simply
+save them:-
+'0', '1', '2', '3',...'17', '18', '19',... '139', '140', '141'
+'FramePlay' (another program included with SuperMagnet) will load in both
+types.
+
+The variable 'F' determines the amount of frames to be saved. A value of
+zero will save frames indefinitely and will only 'stop' when memory is short
+(below 500K). I quote the word 'stop' because in case you want extra still
+(maybe you've freed some memory somehow), an input command will appear
+asking you to enter the amount of any extra frames you wish to save. If you
+don't want any more to be saved but want the program to continue anyway,
+simply enter '0' at this point. Otherwise just press Ctrl+C to break.
+
+When the program is playing, you can press 'p' at any time to pause or
+unpause. The option can be selected initially at the beginning of the program
+as well, with the variable 'P' (=0 or =1). This is very handy for
+checking startup for position. Also it's much quicker for just looking at
+your landscape (scrolling in or out and generally moving around).
+
+'Object selection'
+The selected object(s) for use with mouse (or keypad) is represented by the
+variable(s) 'S1 (and S2)'. While the program is running '-' on the keypad
+can be pressed to select the first (or only) object. Pressing keypad '+'
+(S2) though will enable multi object selection.
+e.g.
+Press keypad '-' and enter (say)  5: Only object 5 is selected.
+...and then if you...
+Press keypad '+' and enter (say) 35: Objects 5 through to 35 are selected.
+Various modes are affected such as the mouse or certain tracking modes.
+
+You can toggle the function of the mouse to a new mode by pressing keys F1
+to F5 (variable 'MC').
+The different modes are:
+(F1) Flexible:  Object is also affected by the other objects as well as
+                mouse. 
+(F2) FlexRigid: Object is only affected by mouse.
+(F3) Orbit:     Object is affected by the mouse and objects by means of
+                momentum.
+(F4) OrbRigid:  Object is only affected by the mouse by means of momentum.
+(F5) Locate:    Mouse now controls screen position.
+The key 'Esc' will turn off mouse mode completely.
+If you want to move around a group of magnets then press keypad '+' and
+enter a number higher than the currently selected object (variable 'S1')
+
+You can toggle the function of the cursor keys by pressing keys F6 to F9
+(variable 'CM')
+(F6) MObject:  Cursor keys control selected object in the normal way.
+(F7) MObjectO: Cursor keys control selected object by means of momentum.
+(F8) Locate:   Cursor keys control screen position in the normal way.
+(F9) LocateO:  Cursor keys control screen position by means of momentum.
+The unimportant variable 'CC' simply indicates that going up and left at the
+same time (with the cursor keys) will go at full speed or 0.7071... (0.5 ^
+2) times the speed like real life.
+Just like the mouse, you can select a cluster of magnets by selecting a
+group of objects (see 'Object selection') to be controlled by the cursor
+keys.
+
+The variable 'D' (Display) controls the look of each magnet. '*' on the
+keypad will toggle while the program is running. The values below will
+produce the following results:
+1: Plot (handy for trail mode (TR$))
+2: Circle
+3: Filled circles (My routine found out through long experiment. Probably
+the fastest filled circles possible!)
+4: Bar (a painted version of a box)
+5: Hexagon (perfect for honeycomb type structures)
+6: Painted version of hexagon (Quick, as it uses AMOS' Polygon function but
+be careful not to make the hexagons overly big (covering the screen!) by
+zooming in too far since AMOS has a few problems for some reason (and we
+don't want it crashing the machine! (Memory actually starts to corrupt)).
+
+Some of my animations have a lovely translucent type effect rather than just
+the standard circles. This is using draw mode 3 AND turning the variable
+FASTCIRC$ to "n" (found in the template under the drawing modes (try
+searching for 'If D=3')). This will effectively fill up all circles with
+pixels allowing for some very clever effects such as contour filling, lucent
+style effects and more. I'm not going to explain it all here. You can
+experiment for yourself, but I suggest that for testing, you have just 1 or
+2 magnets since it updates very slow in this mode (unless you come from the
+future and have a tarted up Amiga, then by all means have hundreds!). Also
+have at least 8 colours (ranging from dark to light or vice versa), to see
+the various modes to their fullest potential. A lot of the information is
+there aswell. It should be relatively clear, just try them out!
+Effective use of this whole feature will guarantee impressive animations
+once saved and played back in realtime (50FPS).
+
+The variable 'B' determines whether objects are drawn beyond the border or
+not. This means that processor time is not wasted on objects you cannot even
+see! I suppose the only reason why you may want it kept off is if you want
+lines to draw beyond the screen with no break-up. Mind though, as a line
+going too far (over the millions) for AMOS to cope with will crash the
+machine. This is unlikely to happen in SuperMagnet, unless you have join on,
+border on 0, and turn up the MP#, or scale in too far...
+...just imagine for a moment 3 lights above the keypad dimming then
+brightening then dimming...CRASH:|
+
+A value of 1 for the variable 'J' (Join) will connect lines from the objects
+and a value of 2 for 'J' will connect only magnets close enough (denoted by
+the variable 'W#') to other magnets. A value of 3 will simply connect every
+object with every other object (with some modification in the template, you
+could even have only a certain range of magnets being joined up). A value of
+0 will turn this function off of course. This function (like display) is
+just cosmetic.
+
+A value of 1 for the variable 'NS' will number all objects on screen. While
+the program is running, you can also press help to toggle it on or off.
+The variables 'PF','TM' and 'TI' display the frame number, frame rate and
+current time at the top of the screen. Turn these off if you want with
+values of 0.
+
+Scale (variable 'SC#') can be altered to zoom in or out (press '=' or '-' on
+the keyboard or click the mouse buttons.). Also, you can directly set the
+scale by pressing keypad 9.
+The variables 'LX#' and 'LY#' determine the location of the screen (use
+cursor keys on the keyboard, but make sure the cursor key mode is correct
+('F6' - which is default)). The mouse can also be used to move the screen
+location around with the correct mouse mode (press 'F5').
+A graphical grid can be drawn to clarify things. A value of 0 turns off the
+grid (variable 'G#'). Any other value defines how dense the grid should be.
+Oh by the way, I had problems getting the grid routine to work correctly.
+For a challenge, why don't you try to make a grid yourself in AMOS. You must
+be able to zoom in and out and move in all four directions; WITHOUT ANY
+lines going beyond the screen boundary. Also, the zooming must be relative
+to the current location (otherwise if you move around AND THEN try zooming
+in or out, the grid will flicker very fast to the left or right since it's
+homing in to its start position way off the screen). Basically run
+SuperMagnet, press the cursor keys and mouse buttons. This grid routine is
+what you must emulate. (Good luck - you'll need it!!!)
+
+The very useful function 'Track' (variable 'TR') can be used to track an
+object and keep it central on the screen. Press keyboard '/' to input a
+value. Typing a number will select the specified object. Typing '0' will
+turn it off and typing -1 will keep all objects central on the screen by
+calculating the average of the positions of the objects and adjusting the
+screens position (LX# and LY#) automatically. Also, a value of -2 will
+average only the objects in the Object selection range (S1 to S2;
+remember?). This will centre the screen only on the magnets in the range.
+
+Secondly, the variable 'TA' ('#' on the keyboard during the program) is used
+for other tracking possibilities. A value of '1' will calculate the 'average
+zoom position' if you will. This means that the screen will zoom into where
+most of the magnets are and not focus much on a magnet far away from the
+action for example (useful for mild WCB's!! (warp core breaches [see
+later:])).
+A value of '2' will Zoom and Locate perfectly for every single magnet there
+is. And at the same time keeping every single one inside the border. This
+one was difficult to program. Try it out!
+Also, explore possibilities of mixing these two tracking modes for other
+unusual tracking modes.
+On top of this, a value of '3' is exactly like '1' except only those in the
+object selection are tracked.
+And a value of '4' is exactly like '2' except (once again) only objects
+selected are zoomed.
+   On top of all of that...
+The track mode (variable 'TRM') is only applicable if either of the above
+track modes are on ('Track' (variable 'TR') is set to '-1' or '-2'  or 'TA'
+is above 0). A value of 0 ('TRM') will affect the average position of the
+screen even if the magnets haven't appeared yet (time appearance of magnets
+controlled by the variable 'T(N)' - see later.)
+
+The value for 'Variable input' (variable 'VS') is the number of times you
+have to input something in after pressing ',' on the keyboard. Pressing this
+will give you (by default) 4 numbers to input. This affects the information
+that's displayed (Space bar). For example if you have 100s of magnets
+(objects) on screen, and you want only the information for magnets number 3,
+5, 1 and 14 say, you could type these numbers in (after pressing ',' on the
+keyboard). Otherwise you would get pages and pages of data giving
+information on all of the magnets (not a problem if you had few to start off
+with, by the way). '.' on the keyboard will swap back if you want all
+magnets' info shown.
+
+The Multiple Factor ('V#') affects how quickly variables like 'Accuracy'
+increase and decrease.
+The Speed Factor ('S#') is the variable controlling functions like the speed
+of the mouse or cursor keys.
+
+    ************************
+    ****** Properties ******
+    ************************
+These control the properties of the magnets. They are set initially before
+the program is run.
+
+A 'For Next' routine goes through all the objects, thus removing the need to
+say d#(1)=5. d#(2)=5. d#(3)=5. etc., thus if you want any individual magnet
+or a selection of magnets to have a certain property, insert an If command
+in this way...
+If you wanted magnets 10 to 37 to have a value of 5 for defence:-
+For n=1 to o (already there)
+ If n>=10 and n<=37
+  d#(n)=5
+ End If
+Next n
+
+Defence: D#(N). How greatly affected the magnet's defence is from others.
+Attack:  P#(N). How greatly affected the magnet's attack is to others.
+
+Initial speed (XC#(N),YC#(N)): Gives the magnets a starting speed momentum.
+e.g. XC#(5)=-10 gives magnet 5 a starting speed of 10 to the left.
+
+Time: T(N). Determines at what frame number the magnets will appear for the
+first time. Saying T(N)=20 is saying all magnets will appear at frame 20.
+Saying T(N)=N is saying one magnet will appear after another (i.e. object 1
+will appear at frame 1, object 2 will appear at frame 2, object 3 at frame 2
+etc.) since 'n' is being risen by 1 ('For Next' loop). Also, saying T(N)=N*4
+is saying one new magnet will appear every 4 frames (i.e. object 1 will
+appear at frame 4, object 2 at frame 8, object 3 at frame 12).
+Quoting this time line will simply make all magnets appear at frame 0 which
+in most cases is what you'll want (equivalent to putting 'T(N)=0').
+
+Colour: C(N).  What colour the magnets are set to. The default setting is 1
+which is the colour white. There are 2 colours to start with; 0=black,
+1=white. If you want more colours, change the variable 'CL' to 4,8,16 or 32
+colours. This way, you can have different colours for the magnets.
+E.g.
+If N<=20
+  C(N)=1
+ Else
+  C(N)=2
+End if
+These lines of code can replace the usual C(N)=[whatever] and will give
+magnets below or equal to 20 the colour 1 and those after 20 the colour 2.
+If you want to change the colours of the palette, Press 'Right Alt' + cursor
+key down until you get to PAL:. Colour 1,$FFF means that colour will be
+white ($FFF). To change colour, alter the values after the '$' symbol.
+
+Size: S#(N). Simply changes the size of the circle of each magnet. Purely
+graphical of course. You might want to have the value equal to the ATTACK
+property of the magnet (i.e. s#(n)=p#(n)). This will create the effect that
+the bigger the magnet, the more powerful it is.
+
+    ************************
+    ******* Position *******
+    ************************
+All the quoted lines in the position setup are basically ways of setting up
+your magnets initially. I'm not going to give a total explanation of what's
+possible; you can experiment for yourself. You can also make your own
+position set-ups with a bit of knowledge.
+If you want to try any of these others out, firstly quote the default set-up
+which is the circular placing. I suggest you also have many magnets, say 36
+(variable 'O' remember) to start with so that you can see the various
+patterns each set-up produces.
+
+Random placing order: All magnets are set up randomly over the screen.
+
+Ordered Pattern: Simply creates a square of magnets spread evenly over the
+screen. Unquote all 3 lines. Use numbers of magnets such as 9, 16 or 36
+(variable 'O') to see properly what this can do.
+
+Standard bar: Sophisticated version of Ordered Pattern.
+All the relevant info. should be there just above the routine but just to
+make it clear...
+SN=Magnets equal to or higher will be affected (and lower than SN+(VX#*VY#)
+since that's how many magnets will be needed to create the bar.)
+VX# and VY# denote the amount of magnets horizontally and vertically.
+SX# and SY# denote the horizontal and vertical spacing.
+PX# and PY# represent the centre position of the bar.
+Erase all the stuff in brackets afterwards to place the box corner instead
+(like DPaint's Alt+X). Unquote all 8 lines.
+
+Honeycomb bar: A useful version of the above bar
+Everthing as said above apart from the fact that you don't need to set 2
+values for the spacing like the standard bar, just one (VS#). This routine
+is very handy if you want equal force on all magnets at the beginning. Looks
+nice too and was quite tricky to program (oooh... about an hour with the
+standard bar routine as well). Unquote all 10 lines.
+
+Line: Creates a line of magnets from p1x#,p1y# to p2x#,p2y#. 'SN' determines
+what start magnet the line routine will have an effect upon and the variable
+VN denotes the number of magnets along the line. If you want to create an
+imaginary last magnet (useful for linking lines to together without having 2
+magnets on top of each other at the joints - think of Deluxe Paint's
+'cyclic' option in the 'Move' menu), change the text 'N<=VS#' to 'N<VS#'.
+Unquote all 10 lines.
+
+Circle: Creates a circle of magnets. All the relevant info for the variables
+should be there, but as an interesting example, try this for a good spiral
+effect (start with around 80 objects):-
+VN=O (the variable 'o'): VS#=100 : VA#=1440 : VO#=0
+Then just before the End If command, type:
+VS#=VS#/1.01
+
+If you want to use any of these positional placing in the data/template
+program (modular version of SuperMagnet), just copy the relevant pieces of
+text across.
+
+** FILL **
+This will create a cluster of magnets in a certain area rather than the
+usual line or circle of magnets.
+For any of the special fill set-ups to work, you must first unquote the line
+'VA#=Rnd(360)'. Next you must unquote one of the VS# lines. The 2nd one is
+preferable, creating an even spread throughout. The first and third VS#'s
+create a squarely proportional spread or inverse spread.
+
+Randomly filled circular placing: Unquote this line for filled in circular
+placing. 'V1#' controls the size of the circle.
+
+Random dynamically-concentrated square: Similiar to above, except in shape.
+
+** Object clash ** (linked with previous fill)
+With this active, any 2 objects that are initially positioned too close to
+each other are recalculated. This function is used for random screen placing
+or shape filling. It generally unclutters all the magnets and is really only
+necessary for the random modes of placing. There are 6 lines altogether in
+this routine, but only unquote 1 of the Ifs. This means unquoting just 5
+lines altogether. The first IF means that if any two objects get in the
+surrounding square of them, a new value is calculated. The second IF is the
+default one. This detects proper circular clashing. If any 2 objects break
+the limit and get too close, they are recalculated (a new random position is
+made). You can determine the size of the 'breathing space' limit by variable
+O#. This variable is at the beginning of the routine. A value of 16
+(default) means they cannot get within 16 pixels worth of each other.
+
+Load IFF: This will allow you to create positions for the magnets based on
+an IFF created from a paint package. Each magnet is represented by one
+pixel. There are some pics included already in the scenes drawer (In fact
+some of my modules included use some of the scenes). Make sure you define
+the correct path to ensure loading of the pic and set the variable 'PIC' to
+1 (straight above the routine in supermagnet). Also, there are two possible
+modes within the routine itself - Unquoting the 'Every pixel counts' line
+will turn every pixel on screen to a magnet position for SuperMagnet, but
+the 'Fill in routine' will convert even 'painted' areas of a picture into
+well spaced apart magnets. This will save you from having to painstakingly
+space pixels apart accurately yourself in a paint package. You can define
+the minimum distance between each magnet:-
+If Sqr(((X-X#(M))^2)+((Y-Y#(M))^2))<6 _______ [Change '<6 to another number
+(such as <20)]
+
+************* Other keys *****************
+Pressing '\' (next to backspace) while the program is running will halt any
+continuous scroll created by use of the cursor keys in LocateO mode (or
+mouse in Locate mode).
+Pressing '0' on the keypad will halt any momentum on the magnets if
+applicable.
+Pressing '.' on the keypad will halt any momentum on the currently selected
+magnet(s) (if applicable).
+Pressing '[' or ']' will decrease or increase the variable S# by amount V#.
+This operates the speed of the mouse etc.
+
+******* Information Types *******
+Activated by pressing Space bar and typing a value from 1 to 17.
+
+0: <None>
+1:  Statistics:    Displays basic info such as the current position or time.
+2:  Attack:        Displays the attack value of each magnet.
+3:  Defence:       Displays the defence value of each magnet (yep).
+4:  Power:         Displays overall value (Attack/Defence) of each magnet.
+5:  Position:      Displays position of each magnet giving X & Y coord.
+6:  Distance:      Displays magnet distance from centre of screen.
+7:  Position diff: Displays magnet position differences giving X & Y coord.
+8:  Distance diff: Displays magnet position differences.
+9:  Angle:         Displays angle from screen centre.
+10: Angle diff.:   Displays angle from magnets.
+11: Angle diff.3P: Displays angle from 3 point magnets.
+12: Pressure:      Displays pressure of each magnet.
+13: Velocity:      Displays velocity of magnets giving a X coord. and Y.
+14: Speed:         Displays speed.
+15: Direction:     Displays direction of magnet in degrees.
+16: Misc stats:    Displays global info. about the magnets' speed etc.
+17+:    Displays what all information types do.
+Only certain magnet info may be shown if you want by pressing ',' on the
+keyboard and typing in which magnets' info you want displayed (See earlier).
+
+****Tips on the BASIC MAGNETICS****
+If you have 10 magnets and you want 5 of them to do something different to
+the other 5, type in the usual 'If' and 'End If' commands between the lines
+of code you want done. 
+E.g.
+If M<=5
+'[Do the Magnetic repel mode]
+End If
+If N>5
+'[Do whatever]
+End If
+The variables which decide the object number are 'M' and 'N'. 'M' is the
+rest of the magnets acting on the one in question i.e. all of the magnets
+under or equal to 5 are being repelled by the rest. 'N' however says that
+the magnets in question (ie. over 5) are NOT being controlled but
+CONTROLLING the rest of the magnets. Here is a good example to clarify:
+
+Sun=1. Earth=2. Moon=3
+For the sake of argument...
+Sun controls Earth and moon.
+Earth controls moon and not sun.
+Moon controls neither.
+
+Therefore:
+If n=1                   [m can be anything (earth or moon)]
+ <move>                  (i.e. unquote the relevant repel/attract modes)
+End If
+If n=2 And m=3
+ <move>
+End If
+If n=3
+ <do nout>		(moon controls neither - so you won't need to
+			include this part of course)
+End If
+
+Another simple way of doing exactly the same thing is to just say:-
+
+If m>n      (see? - 1 effects 2 & 3, 2 effects just 3 and 3 effects nothing)
+<move>
+End If
+
+By default, the program does not let any magnet control itself. So the sun
+won't affect itself (you'd probably get a divide by zero if you tried
+anyway).
+
+To really make it clear, load in the project called 'Mincer'. Then merge the
+template below (as usual).
+Alt+cursor key down until you reach 'MAGNET:' (the module equivalent of 'THE
+BASIC MAGNETICS:').
+Take a look at the line where it says:
+'If M>=91 and N>=91'
+
+Object 91 and above is actually the water going down the spout. It's saying:
+For any magnet 91 or above (M>=91), act on any other magnets that are 91 or
+above (N>=91). These are the magnets representing the water reacting upon
+the other water magnets. Now look further down to the point which says:
+'IF N<91 and M>=91'
+
+Objects below 91 are the atoms of the spout itself. It's asking all of the
+spout objects (below 91) to act on the water (above or equal to 91).
+So to sum up (you are still with me aren't you?), all of the water objects
+aren't affecting the spout outline objects and the spout outline objects
+aren't affecting the rest of the spout outline objects. Everything else is
+affected (water affects water and spout outline affects water).
+
+Just below the line Next N there is the line:
+YCE#(M)=YCE#(M)+0.1*D#(M)*MP#
+
+With this line active (it is now), all of the magnets will be affected by
+gravity. Any that you don't want affected could be given a defence of value
+0 i.e. D#(<number(s)>)=0 to keep them stuck in their position (see
+Properties). If you do want all the magnets to pe pulled by gravity at the
+same speed no matter what their defence value is, then just cut out the
+'*D#(M)' text. You could even change the plus to a minus for gravity to
+reverse or change the YCE#(M)'s to XCE#(M)'s for sideways gravity. NB. The
+'MP#' part means that gravity is increased (just like every other moving
+function) when you raise the MP# variable. This truly allows the variable
+MP# to act as a time variable.
+
+I suggest you load the 'Data' (bare bones module) file and merge the
+template in afresh if you want to try this out. Either that, or just simply
+use 'SuperMagnet' for the test.
+Another piece of advice is that you can use the power symbol (^) after the
+text F# in the 'MAGNET:' code. You can use this on all of the magnetic
+modes, but one to pay particular attention to is using the symbol like this
+with these modes:-
+
+     If F#<>0
+      '3: Magnetic Attract
+      XE#(M)=XE#(M)+ZX#/F#^3*X2#
+      YE#(M)=YE#(M)+ZY#/F#^3*Y2#             These 4 lines have ^2 after F#
+      XCE#(M)=XCE#(M)+ZX#/F#^3*X2#
+      YCE#(M)=YCE#(M)+ZY#/F#^3*Y2#
+      '4: Magnetic Repel:
+      XE#(M)=XE#(M)-ZX#/F#^4*X2#
+      YE#(M)=YE#(M)-ZY#/F#^4*Y2#             These 4 lines have ^3 after F#
+      XCE#(M)=XCE#(M)-ZX#/F#^4*X2#
+      YCE#(M)=YCE#(M)-ZY#/F#^4*Y2#
+     End If
+
+This will create a real atom effect whereby if a magnet gets too close it
+will be pushed away. However if a magnet gets further away, it will be drawn
+in closer, but at an ever decreasing rate when the magnet gets too far. This
+is how atoms of the real world really work.
+
+If you load in the snooker module (merge the template on top of course), you
+will notice that the magnetic repel modes are unquoted, but what's so
+important is that these lines have F# powered to a high number (F#^13). This
+makes the magnetic repel very 'tight' - necessary for immediate reversal
+direction when two snooker balls collide (the lower the ^, the more gradual
+the direction is changed).
+
+NB. The 'If F#<>0' and 'End If' surrounding the code makes sure that there
+are no divide by zero errors. Changing the 'If F#<>0' line to instead read
+'If F#>2' will remove the possibility of any two magnets getting so close
+that the next moment they are flung miles apart! Having it even higher (If
+F#>4) will lessen the possibility of an error even further. Of course, the
+other option is to increase the accuracy of the program (by lowering the
+variable MP#). This will calculate all the in-between steps thus preventing
+any magnets getting too close in the first place. For a good look at what
+happens when either of these are insufficient to prevent the SuperMagnet
+equivalent of a 'Warp-core breach' (magnets clashing), take a look at the
+included animation I have provided called 'MincerExploded'.
+
+If you do want to use 100s of magnets, make sure you increase the buffer by
+typing 'Set Buffer 30 (or higher even)' at the very beginning of the program.
+
+What can speed up the process sometimes tenfold or more is the use of
+calculating areas. Let me explain.
+If you have 10 magnets in your program, that means 10*10 calculations have
+to be made as all the magnets have to act upon all the other magnets (well,
+most of the time). If you have 20 magnets in your program, that means 20*20,
+a total 4 times greater than just 10 magnets. This means on average, that
+with twice the amount of magnets you use, it will slow down by 4 times.
+Anyway, there's a great way of reducing the amount of calculations to be
+made while still retaining accuracy. This involves calculating the magnets
+of which only those which are in the immediate vicinity of the acting magnet
+are to be made.
+E.g.
+   '4: Magnetic Repel:  
+   If F#<16   		Only those magnets close enough (16 pixels or
+			nearer) to the current magnet will be affected.
+     XE#(M)=XE#(M)-ZX#/F#*X2#
+     YE#(M)=YE#(M)-ZY#/F#*Y2#
+     XCE#(M)=XCE#(M)-ZX#/F#*X2#
+     YCE#(M)=YCE#(M)-ZY#/F#*Y2#
+   End If
+
+'F#' is the distance between the current acting magnet (N) and the magnet
+acted upon (M).
+All of this is in direct contrast to where F# has to be greater than a
+certain amount to be acted upon (see approx. page above). You can
+incorporate both routines by saying 'If F#<16 And F#>2' - which will only
+act on magnets close enough, to save time (F#<16) and magnets far enough to
+prevent any objects clashing "magnet on top of other magnet; let's zoom off
+to infinity!" syndrome (F#>2). Also, a lot of my modules have these two
+numbers as variables 'o1#' and 'o2#'. Simply change these instead if they
+are there. If you are going to use this cut-off distance calculation, then
+you could move the line 'Gosub ANGLE' (and the two lines below that) to just
+below the 'If F#<[number]'. This will in most cases drastically speed up
+SuperMagnet since it only needs to find the angle for the current magnet.
+For an example just take a look at the mincer module; you'll see something
+like what I've been saying in the 'MAGNET:' section...
+
+Gosub DISTANCE                                         <
+If F#>O1# and F#<O2#                                   <
+ Gosub ANGLE                                           <
+ XE#(M)=XE#(M)-ZX#/F#*X2#                              <  FASTER
+ YE#(M)=YE#(M)-ZY#/F#*Y2#                              <  ROUTINE
+ XCE#(M)=XCE#(M)-ZX#/F#*X2#                            <
+ YCE#(M)=YCE#(M)-ZY#/F#*Y2#                            <
+End If                                                 <
+
+...rather than what usually would be this:
+
+Gosub DISTANCE                                         <
+Gosub ANGLE                                            <
+If F#>O1# and F#<O2#                                   <
+ XE#(M)=XE#(M)-ZX#/F#*X2#                              <  SLOWER
+ YE#(M)=YE#(M)-ZY#/F#*Y2#                              <  ROUTINE
+ XCE#(M)=XCE#(M)-ZX#/F#*X2#                            <
+ YCE#(M)=YCE#(M)-ZY#/F#*Y2#                            <
+End If                                                 <
+
+Magnets that are outside the O# boundary simply do not need calculation of
+the angle (unlike distance where it is needed to see if it is close enough
+in the first place to start calculating).
+
+Within the 'MAGNET:' section there are four lines with the name 'border'
+above them. These will add a border to the proceedings so that magnets that
+come into contact will be rebounded off them (reverse momentum). Once again
+(I have said before), if you want this border routine in the
+'data-merged-with-template (module)', then just highlight it and copy it
+across.
+
+Oh, and I shouldn't have to tell you that to get to one part of the program
+to another, such as 'PROPERTIES:' to 'POSITION:' or 'MAGNET:', just press
+Ralt+cursor key up or down. This is standard for any AMOS program to quickly
+get to text with the colon after.
+
+A good idea to see how various types of projects are created I suggest you
+take a look through the modules drawer and load one in. Don't forget to
+merge the template beneath though! (you should know by now).
+
+******** FramePlay ********
+This is a separate program from SuperMagnet. I'll give you a quick
+explanation:-
+Just run the program and it should play all of your saved frames (S$="y" in
+SuperMagnet).
+During play, you may press the Space bar to stop playing, whereby the
+following keys have an effect:-
+Cursor key left:  Slide through the frames backward.
+Cursor key right: Slide through the frames forward.
+Cursor key down:  Move 1 frame backward at a time.
+Cursor key up:    Move 1 frame forward at a time.
+Keyboard Return:  Move to frame 1
+Keypad '+' & '-': Change increment of frame skip (default 1)
+If you use more than 2 colours, you must change the amount of colours
+'variable 'CL' in the variable setup.
+Also, change the amount of frames ('F') at the beginning to the required
+amount and if applicable change the loading path to whereever ('LD$').
+
+If you want to create an animation of all collected frames, then I suggest
+that you use my included arexx program for DeluxePaint 5
+('FramesToAnim.dprx'). If however, you use a recent version of Personal
+Paint, then there should be included in the package 'FramesToAnim.pprx'. The
+frames should be readily available to load into PPaint (unless you have S$
+set to "s" rather than "y"). Once the macro has been double clicked and the
+load requester is showing, simply select the first frame (should be
+"Pic.0000"). And PPaint will do the rest.
+Once saved from DPaint or PPaint, I suggest you also then load the created
+animation through Viewtek to see it run in realtime at a silky smooth 50fps!
+If your machine isn't quite fast enough for 50fps, you could always convert
+the animation to the Anim7 mode (included in the full Viewtek package) or if
+you have PPaint, you can save it in Anim7 too.
+
+********** A quick(ish) note **********
+Note that there might be a few things I haven't mentioned, but generally,
+everything should be relevant.
+This program was initally created for my use and enjoyment. It was never
+meant to go out to the rest of the Amiga public. I just had to see though,
+if anyone else out there could find interest in using 'SuperMagnet'. Try
+some of my own modules I have created, and see what you think of them (load
+in the 'data' or one of my own projects (just a modified 'data') and merge
+the template on top) and most importantly, check out those animations
+included!
+If you create any interesting modules, animations or just appreciate the
+program, I would love to hear from you.
+A pity about the speed of the program; it is 'only' in AMOS and not machine
+code however. The speed of the program decreases exponentially the more
+magnets there are. My 'mincer' module for example runs at 0.25 FPS on
+average on my '060. You would need a processor 200x as fast to run it in
+realtime. OK, so with THAT many magnets it's not even the speed of an 8-year
+old Speccy flight sim, but remember: you can always save the frames to RAM
+and play them back with 'FramePlay' or make an animation. I also suggest you
+get hold of some good maths libraries like FMaths. SuperMagnet uses
+complicated maths functions like 'Sin' and 'Cos', and these libraries from
+FMaths will give up to a 4x speed increase.
+Let me just say that if you did have a super-fast '080(?!?) beater, you
+could create an incredible real-time pinball table entirely from magnets,
+and using just a bit of extra code, implement some flippers and a score at
+the top. Many colours could be used, and the amount of detail would be
+superb considering how many effects you could put in. Of course, even a
+basic table made up of say a thousand magnets renders at a crawling 0.001
+frames per second on my Amiga, but remember each magnet is acting in
+relation to the rest. Anyway, you could always program the table and save
+the frames to create an incredible animation!
+If anyone by the way, would be interested in converting this program to a
+multitasking interface on Workbench, I would be only too happy to assist in
+the creation and interface of such a project.

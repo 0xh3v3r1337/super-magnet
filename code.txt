@@ -1,0 +1,1169 @@
+'''''''''''''''''''''''''''''''''''''''''''''''''
+'''''''''''''''''''''''''''''''''''''''''''''''''
+'''''''''''''''''''''''''''''''''''''''''''''''''
+'The code onwards from this point (and up until
+'"template"), is the actual description of what
+'will happen... or "Module". It is the only part
+'of the code that is necessary to be saved (because
+'it is the only part that ever gets changed).
+'
+'According to how complex you want to make it, the
+'module can be a short 3 k in length - or 50k plus
+'for one of my big projects (like the "mincer"
+'module/animation I've done elsewhere)
+'
+'Anyway, what /this/ 'module' will do is create a
+'simple ' magnet repel/attract animation. It is
+'also used as the default 'bare bones' module
+'to be built up to something better.
+''''''''''''''''''''''''''''''''''''''''''''''''''
+''''''''''''''''''''''''''''''''''''''''''''''''''
+''''''''''''''''''''''''''''''''''''''''''''''''''
+Set Buffer 50
+Set Double Precision 
+Goto TEMPLATE
+''''''''''''''''''''''''''''''''''''''''''''''''''
+''''''''''''''''''''''''''''''''''''''''''''''''''
+'The starting variables (see help doc for explanation)
+
+PRIMARY:
+O=3 : CL=2 : TR$="n" : T=0 : A$="y" : MP#=0.5
+S$="n" : D$="Ram:" : K#=1.0 : F=1*K# : P=0
+V1#=50 : O#=80 : O1#=3 : O2#=32
+X1#=2.0^-5 : Y1#=2.0^-5
+X2#=2.0^0 : Y2#=2.0^0
+X3#=2.0^8 : Y3#=2.0^8
+S1=1 : S2=1 : MC=0 : CM=1
+B=1 : J=0 : W#=32
+NS=0 : PF=1 : TM=1 : TI=1
+SC#=1 : LX#=0 : LY#=0 : G#=1
+TR=0 : TA=0 : TRM=0
+VS=4 : V#=2.0^(1.0/8) : S#=1
+'
+Dim X#(O),Y#(O),XC#(O),YC#(O),D#(O),P#(O),S#(O),T#(O),C(O),V(VS),A(O)
+Dim XE#(O),YE#(O),XCE#(O),YCE#(O),AC#(O)
+Return 
+''''''''''''''''''''''''''''''''''''''''''''''''''''
+''''''''''''''''''''''''''''''''''''''''''''''''''''
+'"Properties" The variables assigned to the magnets themselves
+'indicating their Defense, Power, x&y starting Speed,
+'Time (until appearance), Size, Type, Colour and Type
+'(not critical, but useful for sectioning off certain
+'ranges of magnets later on to make things easier).
+'
+'Note that "IFs" arguments can be applied if desired
+'to give a certain range of magnets certain properties
+'
+PROPERTIES:
+For N=1 To O
+ D#(N)=1.0
+ P#(N)=1.0
+ XC#(N)=0
+ YC#(N)=0
+ T#(N)=-9999
+ S#(N)=10
+ C(N)=2
+ A(N)=1
+ 'Print N;T#(N);T#(N)-T#(N-1) : Wait Key  
+Next N
+Return 
+'''''''''''''''''''''''''''''''''''''''''''''''''''
+'''''''''''''''''''''''''''''''''''''''''''''''''''
+'The "Position" section indicates where the magnets
+'will be placed in the very beginning.
+'The actual code it's doing here is simply placing them
+'in a circle
+'
+POSITION:
+For N=1 To O
+ REPOS:
+ '* 
+ V1#=100
+ X#(N)=Sin(N*(360.0/(O)))*V1#+160 : Y#(N)=Cos(N*(360.0/(O)))*V1#+128
+ '* 
+Locate 0,0 : Print N;"/";O : If CL=2 : Ink 1 : Else : Ink C(N) : End If : Plot X#(N),Y#(N)
+Next N
+Return 
+'
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'the "Pal" section gives screen specifics such as the colour
+'palette and screen size etc.
+'
+PAL:
+For N=0 To 2
+ Screen Open N,320,256,CL,Lowres : Clip 0,0 To 320,256
+ Paper 0 : Cls : Flash Off : Curs Off 
+ '
+ Palette $0,$FFF,$88F,$F00,$6D3,$80F,$AF,$F40
+If CL=2 : Colour 0,$0 : Colour 1,$FFF : Pen 1 : Else : Pen 2 : End If 
+ 'Unquote line to test colours
+ 'For M=1 To CL-1 : Pen M : Locate 0,M : Print "ink";M : Next M : Wait Key  
+ '
+Next N
+Return 
+'
+'''''''''''''''''''''''''''''''''''''''''''''
+'''''''''''''''''''''''''''''''''''''''''''''
+'The core of the module - the 'Magnet' section basically
+'says what's going to happen to the magnets and how they
+'interact. Are they going to 'repel' at super-sonic speed,
+'attract, or drift around each other?
+'Everything can be configured easily so that certain
+'magnets can be given different properties to other
+'magnets. Gravity can also easily be added.
+
+'The Gosub commands also skip to the very important subroutines
+'of the program (much further down this code.txt file)
+'They calculate the "Distance:", "Angle:" and the resulting new "Speed:"
+'based on the calculation of the distance/angle.
+'
+'Also, the "Begin" routine (again much further down - clearly labelled
+' - search for "Begin:" ) stores all of the X&Y speeds for the magnets
+'in old variables, so that they don't get mixed up with new calculations.
+'When the new calculations are complete, all of the newly assigned
+'variables are then transferred over to the old ones, so that the
+'process can repeat.
+'
+MAGNET:
+For M=1 To O
+ If T#(M)<=T#
+  If D#(M)<>0
+   For N=1 To O
+    If T#(N)<=T#
+     If N<>M and P#(N)<>0
+      '''' 
+      '''' 
+      If A(O)=1
+       Gosub DISTANCE
+       Gosub ANGLE
+       If F#<>0
+        '3: Magnetic Attract 
+        'XE#(M)=XE#(M)+ZX#/F#^1*X2#
+        'YE#(M)=YE#(M)+ZY#/F#^1*Y2#
+        'XCE#(M)=XCE#(M)+ZX#/F#^1*X2#
+        'YCE#(M)=YCE#(M)+ZY#/F#^1*Y2#
+        '
+        '4: Magnetic Repel:
+        'XE#(M)=XE#(M)-ZX#/F#^1*X3#
+        'YE#(M)=YE#(M)-ZY#/F#^1*Y3#
+        XCE#(M)=XCE#(M)-ZX#/F#^1*X3#
+        YCE#(M)=YCE#(M)-ZY#/F#^1*Y3#
+        '
+        '5: Proportional Attract:
+        'XE#(M)=XE#(M)+ZX#*F#*X1#
+        'YE#(M)=YE#(M)+ZY#*F#*Y1#
+        XCE#(M)=XCE#(M)+ZX#*F#*X1#
+        YCE#(M)=YCE#(M)+ZY#*F#*Y1#
+        '
+       End If 
+      End If 
+      '''' 
+      '''' 
+     End If 
+    End If 
+   Next N
+  End If 
+  '
+  'Add these next 2 lines for instant gravity!
+  'YE#(M)=YE#(M)+0.1*MP# 
+  'YCE#(M)=YCE#(M)+0.1*MP# 
+  XE#(M)=XE#(M)+XCE#(M)*MP#
+  YE#(M)=YE#(M)+YCE#(M)*MP#
+  '
+  'The next 4 lines will make a border so that the magnets won't go past the edges of the screen.  
+  If YE#(M)>256-S#(M) : YE#(M)=Y#(M) : YCE#(M)=0 : End If 
+  If YE#(M)<0+S#(M) : YE#(M)=Y#(M) : YCE#(M)=0 : End If 
+  If XE#(M)>320-S#(M) : XE#(M)=X#(M) : XCE#(M)=0 : End If 
+  If XE#(M)<0+S#(M) : XE#(M)=X#(M) : XCE#(M)=0 : End If 
+ End If 
+Next M
+Return
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'The 'extra' section contains the code that you can define yourself.
+'Perhaps you'd like extra custom variables that affect the outcome or
+'maybe you'd like to draw extra things (one example is a green cloth
+'for a snooker table). Everything that doesn't fit in anywhere else
+'can be placed here:
+'
+EXTRA:
+'Def Fn X(N#)=((N#-160+LX#)/SC#)+160 
+'Def Fn Y(N#)=((N#-128+LY#)/SC#)+128 
+'Ink 3 : Bar( Fn X(160-60)), Fn Y(128-60) To( Fn X(160+60)), Fn Y(128+60)
+Return
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'Finally, the "Display" section describes how the magnets will look.
+'The current code actually just draws a simple circle, but I have the
+'code elesewhere to draw translucent or contoured magnets.
+'If you wanted to, you could replace the "Circle x#,y#,z#" part with
+'"Plot x#,y#" and it would draw a single pixel for each magnet instead.
+'
+DISPLAY:
+For M=1 To O
+If CL=2 : Ink 1,0 : Else : Ink C(M),0 : End If 
+ If T#(M)<=T#
+  X#=((X#(M)-160+LX#)/SC#)+160 : Y#=((Y#(M)-128+LY#)/SC#)+128 : Z#=S#(M)/SC#
+  If(B<>1 or(X#>=-Z# and X#<=Z#+319 and Y#>=-Z# and Y#<=Z#+255))
+   On Error Goto PIXEL
+   '* 
+   Circle X#,Y#,Z#
+   '*   
+   Gosub XDRW
+  End If 
+ End If 
+Next M
+Return 
+'''''''''''''''''''''''''''''''''''''''''''''''''
+'''''''''''''''''''''''''''''''''''''''''''''''''
+'''''''''''''''''''''''''''''''''''''''''''''''''
+'The code onwards ("Template"), is used to accompany
+'every "module" (above). Therefore, it is never
+'changed in any way. Most of it actually handles
+'stuff like the mouse movements, info display
+'and saving of screens to an animation etc., but
+'there are a few very important subroutines that
+'calculate the Distance, Angle and the resulting new
+'Speed.
+''''''''''''''''''''''''''''''''''''''''''''''''
+''''''''''''''''''''''''''''''''''''''''''''''''
+''''''''''''''''''''''''''''''''''''''''''''''''
+TEMPLATE:
+Hide : Degree : Fix(6)
+Limit Mouse 128,42 To 447,297
+X Mouse=288 : Y Mouse=170
+XO=X Mouse-128 : YO=Y Mouse-42
+Gosub PRIMARY
+Gosub PAL
+Gosub PROPERTIES
+If A$="l" or A$="m" : Goto SKIP : End If 
+Gosub POSITION
+SKIP:
+If MC=2 : OD#=D#(S1) : For N=S1 To S2 : D#(N)=0 : Next N : End If 
+Do 
+ If(Key State(9)=True and A$="y") or A$="l" or A$="m"
+  Show : F$=Fsel$("Sd0:*.smd","","Load Magnet","Time slice:") : Hide : Open In 1,F$
+  For N=1 To O : Input #1,X#(N),Y#(N),XC#(N),YC#(N),T#(N) : Next N
+  Input #1,MP#,K#,SC#,C,T#,SK,X1#,Y1#,X2#,Y2#,X3#,Y3#,D1# : Close 1
+  If A$="l" : A$="s" : Goto BEGIN : End If 
+  If A$="m" : A$="y" : Goto BEGIN : End If 
+ End If 
+ If TR$<>"y"
+  Screen C mod 3 : Wait 1 : Cls 0
+  Screen To Front 
+ Else 
+  If Key State(70)=True
+   Cls 
+  End If 
+ End If 
+ CALC:
+ If A$="y"
+  If CM=2 or MC=6 : LX#=LX#+LXC# : LY#=LY#+LYC# : End If 
+  If CM=7 : MP#=0 : End If 
+  If MC>0 and MC<9
+   If XO<>X Mouse-128 or YO<>Y Mouse-42
+    If MC=1 or MC=2
+     For N=S1 To S2
+      X#(N)=X#(N)+(X Mouse-128-XO)*S# : Y#(N)=Y#(N)+(Y Mouse-42-YO)*S#
+     Next N
+    End If 
+    If MC=3 or MC=4
+     For N=S1 To S2
+      XC#(N)=XC#(N)+(X Mouse-128-XO)*S#/8.0 : YC#(N)=YC#(N)+(Y Mouse-42-YO)*S#/8.0
+     Next N
+    End If 
+   End If 
+   If MC=5
+    LX#=LX#-(X Mouse-128-XO)*S#
+    LY#=LY#-(Y Mouse-42-YO)*S#
+   End If 
+   If MC=6
+    'LX#=LX#-(X Mouse-288)*S#/4.0 : LY#=LY#-(Y Mouse-170)*S#/4.0   
+    LXC#=LXC#-(X Mouse-128-XO)*S#/4.0
+    LYC#=LYC#-(Y Mouse-42-YO)*S#/4.0
+   End If 
+   If MC=7
+    MP#=0
+    MP#=MP#+(X Mouse-128-XO)*OMP#/8.0*S#
+    MP#=MP#+(Y Mouse-42-YO)*OMP#/8.0*S#
+   End If 
+   If MC=8
+    'MP#=0 : MP#=MP#+(X Mouse-288)*OMP#/50.0*S# : MP#=MP#+(Y Mouse-170)*OMP#/50.0*S# 
+    MP#=MP#+(X Mouse-128-XO)*OMP#/50.0*S#
+    MP#=MP#+(Y Mouse-42-YO)*OMP#/50.0*S#
+   End If 
+   
+   If X Mouse<=128 : X Mouse=446 : End If 
+   If X Mouse>=447 : X Mouse=129 : End If 
+   If Y Mouse<=42 : Y Mouse=296 : End If 
+   If Y Mouse>=297 : Y Mouse=43 : End If 
+   XO=X Mouse-128 : YO=Y Mouse-42
+  End If 
+ End If 
+ 'moved from (just after grid draw) 
+ Gosub EXTRA
+ 
+ If C-Int(C/K#)*K#=0 or P=1
+  If TR>0
+   TX#=160-X#(TR) : TY#=128-Y#(TR)
+   LX#=LX#+TX#-TX2# : LY#=LY#+TY#-TY2#
+   TX2#=TX# : TY2#=TY#
+  End If 
+  If TR<0
+  If TR=-1 : A1=1 : A2=O : Else : A1=S1 : A2=S2 : End If 
+   For N=A1 To A2
+    If TRM=0 or T#(N)<=T#
+     XA#=XA#+X#(N)
+     YA#=YA#+Y#(N)
+     AC=AC+1
+    End If 
+   Next N
+   TX#=-XA#/AC+160 : TY#=-YA#/AC+128
+   LX#=LX#+TX#-TX2# : LY#=LY#+TY#-TY2#
+   TX2#=TX# : TY2#=TY#
+   XA#=0 : YA#=0 : AC=0
+  End If 
+  If TA>0
+   If TA=1 or(TA=3 and S2-S1>0)
+   If TA=1 : A1=1 : A2=O : Else : A1=S1 : A2=S2 : End If 
+    For N=A1 To A2
+     If(TRM=0 or T#(N)<=T#)
+      For M=A1 To N
+       If(TRM=0 or T#(M)<=T#) and M<>N
+        XP#=X#(M)-X#(N) : YP#=Y#(M)-Y#(N)
+        Z#=Z#+(Sqr((XP#*XP#)+(YP#*YP#)))
+        AC=AC+1
+       End If 
+      Next M
+     End If 
+    Next N
+    If TS2#=0 : TS2#=1 : End If 
+    '''''''''''''''  
+    'Where /128 and ^1 (below) also 1 Sqr (above) change to /16, ^2 and 2 Sqr's      
+    TS#=(Z#/AC/128)^1
+    SC#=(SC#*TS#)/TS2#
+    TS2#=TS# : Z#=0 : AC=0
+   End If 
+   If TA=2 or(TA=4 and S2-S1>0)
+   If TA=2 : A1=1 : A2=O : Else : A1=S1 : A2=S2 : End If 
+    For N=A1 To A2
+     If TRM=0 or T#(N)<=T# : If N=1 : XL#=X#(N) : XM#=X#(N) : YL#=Y#(N) : YM#=Y#(N)
+      Else 
+       If X#(N)<XL# : XL#=X#(N) : End If : If Y#(N)<YL# : YL#=Y#(N) : End If 
+       If X#(N)>XM# : XM#=X#(N) : End If : If Y#(N)>YM# : YM#=Y#(N) : End If 
+      End If 
+     End If 
+    Next N
+    MX#=(((XM#+XL#)/2)-160) : MY#=(((YM#+YL#)/2)-128)
+    LX#=LX#-(MX#-MX2#) : LY#=LY#-(MY#-MY2#) : MX2#=MX# : MY2#=MY#
+    If TS2#=0 : TS2#=1 : End If 
+    TS#=(Max((((XM#-XL#))/160),(((YM#-YL#))/128)))/1.8
+    SC#=(SC#*TS#)/TS2# : TS2#=TS#
+   End If 
+  End If 
+  If CMP=1
+   If C mod(MP#/CMP#)=0
+    K#=K#*MP#/CMP#
+    If K#<1.0 : K#=1.0 : End If 
+    MP#=CMP#
+    CMP=0
+   End If 
+  End If 
+  
+  'Box 0+0,0+0 To 319+0,255+0
+  If G#>0 : Ink 1
+   SX#=160.0+LX#/SC# : SG#=160.0/SC#/G# : N#=SX#-Int(SX#/SG#)*SG#
+   While N#<320 : Draw N#+0.5,0 To N#+0.5,255 : N#=N#+160.0/SC#/G# : Wend 
+   SX#=128.0+LY#/SC# : SG#=128.0/SC#/G# : N#=SX#-Int(SX#/SG#)*SG#
+   While N#<256 : Draw 0,N#+0.5 To 319,N#+0.5 : N#=N#+128.0/SC#/G# : Wend 
+  End If 
+  Gosub DISPLAY
+  If TI=1 : Locate 33,0 : Print T# : End If 
+  If TM=1
+   If P=0
+    Locate ,1 : Centre Str$(Int((50.0/Timer)*10000*K#)/10000)+" FPS"
+   Else 
+    Locate ,1 : Centre Str$(Int((50.0/Timer)*10000)/10000)+" FPS"
+   End If 
+  End If 
+  'nope Timer=0
+ End If 
+ '
+ If PF=1 : Locate ,0 : Centre Right$(Str$(C),Len(Str$(C))-1) : End If 
+ If T<>0 : Gosub INFO : End If 
+ Screen To Front 
+ If A$="y" : Locate 0,3 : Gosub KEYS : End If 
+ If C-Int(C/K#)*K#=0 or P=1 : Timer=0 : End If 
+ '
+ If C-Int(C/K#)*K#=0 and P=0
+  'Save pic routine
+  If S$<>"n"
+   If(C<=F or F=0)
+    If S$="y"
+     If D$="" : D$="Ram:" : End If 
+     If SK<10 : Save Iff D$+"Pic.000"+Right$(Str$(SK),Len(Str$(SK))-1) : End If 
+     If SK>=10 and SK<100 : Save Iff D$+"Pic.00"+Right$(Str$(SK),Len(Str$(SK))-1) : End If 
+     If SK>=100 and SK<1000 : Save Iff D$+"Pic.0"+Right$(Str$(SK),Len(Str$(SK))-1) : End If 
+     If SK>=1000 and SK<10000 : Save Iff D$+"Pic."+Right$(Str$(SK),Len(Str$(SK))-1) : End If 
+    Else 
+     Save Iff D$+Right$(Str$(SK),Len(Str$(SK))-1)
+    End If 
+   End If 
+   If(C=F and F<>0) or Fast Free+Chip Free<500000
+    Screen To Front : Clear Key 
+    Print : Print "How many more frames do you wish to save (0=no more)?" : Input ES
+    Curs Off 
+   If ES=0 : S$="n" : Else : F=C+ES : End If 
+   End If 
+   SK=SK+1
+  End If 
+  '
+  'Save variable routine:
+  If(Key State(10)=True and A$="y") or A$="s"
+   If A$="s"
+    F$="Sd0:Dat.smd"
+   Else 
+    Show : F$=Fsel$("Ram:*.smd","","Save Magnet","Time slice:") : Hide 
+   End If 
+   Break Off 
+   Open Out 1,F$
+   For N=1 To O : Print #1,X#(N) : Print #1,Y#(N) : Print #1,XC#(N) : Print #1,YC#(N) : Print #1,T#(N) : Next N
+   Print #1,MP# : Print #1,K# : Print #1,SC# : Print #1,C : Print #1,T# : Print #1,SK
+   Print #1,X1# : Print #1,Y1# : Print #1,X2# : Print #1,Y2# : Print #1,X3# : Print #1,Y3# : Print #1,D1#
+   Close 1
+   Break On 
+  End If 
+ End If 
+ '
+ If Key State(Scancode)=-1 and Key Shift=8
+ If A$<>"y" : A$="y" : Else : A$="n" : End If 
+  Repeat : Until Key State(Scancode)=0
+  Locate 0,0 : Print "Active - "+A$
+ End If 
+ 
+ 'was save variable code (if(key state(10)...etc.)
+ 'Timer=0 
+ BEGIN:
+ If P=0
+  For M=1 To O
+   If T#(M)<=T#
+    XE#(M)=X#(M) : XCE#(M)=XC#(M)
+    YE#(M)=Y#(M) : YCE#(M)=YC#(M)
+   End If 
+  Next M
+  Gosub MAGNET
+  For M=1 To O
+   If T#(M)<=T#
+    Swap X#(M),XE#(M) : Swap XC#(M),XCE#(M)
+    Swap Y#(M),YE#(M) : Swap YC#(M),YCE#(M)
+   End If 
+  Next M
+ Else 
+  Locate 34,30 : Print "Pause"
+ End If 
+ C=C+1 : If P=0 : T#=T#+MP# : End If 
+ If C-Int(C/K#)*K#<>0 and P=0
+  Goto CALC
+ End If 
+Loop 
+XDRW:
+Goto SKIPXL
+PIXEL: Plot X#,Y# : Resume Next 
+SKIPXL:
+If J>0
+ If J=1
+  If M<O : Polyline X#,Y# To((X#(M+1)-160+LX#)/SC#)+160,((Y#(M+1)-128+LY#)/SC#)+128 : End If 
+  If M>=O : Polyline X#,Y# To((X#(1)-160+LX#)/SC#)+160,((Y#(1)-128+LY#)/SC#)+128 : End If 
+ End If 
+ If J=2
+  For N=1 To O
+   If N<M and Sqr(((X#(M)-X#(N))^2)+((Y#(M)-Y#(N))^2))<W#
+    Polyline X#,Y# To((X#(N)-160+LX#)/SC#)+160,((Y#(N)-128+LY#)/SC#)+128
+   End If 
+  Next N
+ End If 
+ If J=3
+  For N=1 To O : If N<=M : Polyline X#,Y# To((X#(N)-160+LX#)/SC#)+160,((Y#(N)-128+LY#)/SC#)+128 : End If : Next N
+ End If 
+End If 
+If NS=1 : Ink 1 : Text X#,Y#,Mid$(Str$(M),2) : Ink C(M) : End If 
+If NS=2 : Ink 2 : Text X#-6,Y#+8,Mid$(Str$(A(M)),2) : Ink C(M) : End If 
+Return 
+DISTANCE:
+X#=X#(M)-X#(N) : Y#=Y#(M)-Y#(N)
+F#=Sqr(X#*X#+Y#*Y#)
+Return 
+ANGLE:
+If Y#(M)-Y#(N)<>0.0
+ A#=Atan((X#(M)-X#(N))/(Y#(M)-Y#(N)))
+Else 
+ If X#(M)-X#(N)>0.0
+  A#=90.0
+ Else 
+  A#=-90.0
+ End If 
+End If 
+If Y#(M)-Y#(N)>=0.0
+ A#=A#+180.0
+End If 
+ZX#=Sin(A#)*D#(M)*P#(N)*MP#
+ZY#=Cos(A#)*D#(M)*P#(N)*MP#
+Return 
+SPEED:
+SP#=Sqr((XC#(M)^2)+(YC#(M)^2))
+Return 
+ANGLED:
+If YC#(M)<>0
+ A#=Atan((XC#(M))/(YC#(M)))
+Else 
+If XC#(M)>0 : A#=90 : Else : A#=-90 : End If 
+End If 
+If YC#(M)>=0 : A#=A#+180 : End If 
+If A#<0 : A#=A#+360 : End If 
+If A#>=360 : A#=A#-360 : End If 
+If XC#(M)=0 and YC#(M)=0 : A#=360
+End If 
+Return 
+KEYS:
+If Key State(25)=True : If P=0 : P=1 : Else : P=0 : End If : Repeat : Until Key State(25)=False : End If 
+If Key State(64)=True
+ Repeat : Until Key State(64)=False
+ Screen To Front : Clear Key 
+ Repeat 
+  Input T
+  If T>16
+   Print "Object properties:"
+   Print "1: Statistics"
+   Print "2: Attack"
+   Print "3: Defence"
+   Print "4: Power"
+   '
+   Print : Print "Stationary statistics:"
+   Print "5: Position"
+   Print "6: Distance"
+   Print "7: Position diff."
+   Print "8: Distance diff."
+   Print "9: Angle"
+   Print "10: Angle diff."
+   Print "11: Angle diff.3P"
+   '
+   Print : Print "Movement statistics:"
+   Print "12: Pressure"
+   Print "13: Velocity"
+   Print "14: Speed"
+   Print "15: Direction"
+   '
+   Print "16: Misc Stats"
+  End If 
+ Until T<=16
+ Curs Off 
+ Repeat : Until Key State(67)=False
+End If 
+If Key State(56)=True
+ Repeat : Until Key State(56)=False
+ Screen To Front : Clear Key 
+ For M=1 To VS
+  Input Str$(M)+": ";V(M)
+ Next M
+ Curs Off : U=1
+ Repeat : Until Key State(67)=False
+End If 
+If Key State(57)=True
+ Add U,1
+ If U=2
+  U=0
+ End If 
+ Repeat : Until Key State(57)=False
+End If 
+If Key State(60)=True
+ For N=S1 To S2
+  XC#(N)=0 : YC#(N)=0
+ Next N
+ Repeat : Until Key State(60)=False
+End If 
+If Key State(15)=True
+ For M=1 To O
+  XC#(M)=0 : YC#(M)=0
+ Next M
+ Repeat : Until Key State(15)=False
+End If 
+If Key State(63)=True
+ Repeat : Until Key State(63)=False
+ Screen To Front : Clear Key 
+ Locate 0,0 : Print "Time step from ";MP#;" to ";""
+ Input CMP#
+ Print "Adjust frame skip to time change? (y/n)"
+ Input MP$ : Curs Off 
+ If MP$="y"
+  CMP=1
+ Else 
+  MP#=CMP#
+ End If 
+ 'If MP#<>0 : K#=K#/MP# : If K#=0 : K#=1 : End If : End If  
+ Repeat : Until Key State(67)=False
+End If 
+If Key State(47)=True
+ Repeat : Until Key State(47)=False
+ Screen To Front : Clear Key 
+ Print "Frame skip from";K#;" to ";""
+ Input K# : Curs Off 
+ Repeat : Until Key State(67)=False
+End If 
+If Key State(31)=True
+ Repeat : Until Key State(31)=False
+ Screen To Front : Clear Key 
+ Print "Change scale: from ";SC#;" to ";""
+ Input SC# : Curs Off 
+ Repeat : Until Key State(31)=False
+End If 
+
+If Key State(0)=True : CM=0 : Print "No_Cursor" : CID=1 : End If 
+If Key State(1)=True : CM=1 : Print "Csr_View" : CID=1 : End If 
+If Key State(2)=True : CM=2 : Print "Csr_OrbView" : CID=1 : End If 
+If Key State(3)=True : CM=3 : Print "Csr_Magnet" : CID=1 : End If 
+If Key State(4)=True : CM=4 : Print "Csr_RigMagnet" : CID=2 : End If 
+If Key State(5)=True : CM=5 : Print "Csr_OrbMagnet" : CID=1 : End If 
+If Key State(6)=True : CM=6 : Print "Csr_OrbRigMagnet" : CID=2 : End If 
+If Key State(7)=True : CM=7 : Print "Csr_Time" : CID=3 : End If 
+If Key State(8)=True : CM=8 : Print "Csr_OrbTime" : CID=3 : End If 
+'
+If Key State(69)=True
+ CID=1 : MC=0
+End If 
+If Key State(80)=True
+ XO=X Mouse-128 : YO=Y Mouse-42 : MC=1 : CID=1
+ Screen To Front : Locate ,30 : Print "Mse_Magnet"
+End If 
+If Key State(81)=True
+ XO=X Mouse-128 : YO=Y Mouse-42 : MC=2 : CID=4
+ Screen To Front : Locate ,30 : Print "Mse_RigMagnet"
+End If 
+If Key State(82)=True
+ XO=X Mouse-128 : YO=Y Mouse-42 : MC=3 : CID=1
+ Screen To Front : Locate ,30 : Print "Mse_OrbMagnet"
+End If 
+If Key State(83)=True
+ XO=X Mouse-128 : YO=Y Mouse-42 : MC=4 : CID=4
+ Screen To Front : Locate ,30 : Print "Mse_OrbRigMagnet"
+End If 
+If Key State(84)=True
+ XO=X Mouse-128 : YO=Y Mouse-42 : MC=5 : CID=1
+ Screen To Front : Locate ,30 : Print "Mse_View"
+End If 
+If Key State(85)=True
+ 'X Mouse=288 : Y Mouse=170 
+ XO=X Mouse-128 : YO=Y Mouse-42 : MC=6 : CID=1
+ Screen To Front : Locate ,30 : Print "Mse_OrbView"
+End If 
+If Key State(86)=True
+ 'X Mouse=288 : Y Mouse=170 
+ XO=X Mouse-128 : YO=Y Mouse-42 : MC=7 : CID=3
+ Screen To Front : Locate ,30 : Print "Mse_Time"
+End If 
+If Key State(87)=True
+ 'X Mouse=288 : Y Mouse=170 
+ XO=X Mouse-128 : YO=Y Mouse-42 : MC=8 : CID=3
+ Screen To Front : Locate ,30 : Print "Mse_OrbTime"
+End If 
+
+If CID>0
+ If CID=1 or CID=3 : If ID=1 : ID=0 : For N=S1 To S2 : D#(N)=OD# : Next N : End If : End If 
+ If CID=2 : If ID=0 : ID=1 : OD#=D#(S1) : For N=S1 To S2 : D#(N)=0 : Next N : End If : End If 
+ If CID=3 and MP#<>0 : OMP#=MP# : End If 
+ If CID=4 : If ID=0 : ID=1 : OD#=D#(S1) : For N=S1 To S2 : D#(N)=0 : XC#(N)=0 : YC#(N)=0 : Next N : End If : End If 
+ If MP#=0 : MP#=OMP# : End If 
+ CID=0
+End If 
+
+If Key State(76)=True
+ If CM=1 : LY#=LY#+S#*SC#*Sqr(Timer)*8/K# : Locate 0,29 : Print "LX";LX# : Print "LY";LY# : End If 
+ If CM=2 : LYC#=LYC#+S# : End If 
+ If CM=3 or CM=4 : For N=S1 To S2 : Y#(N)=Y#(N)-S#*8 : Next N : End If 
+ If CM=5 or CM=6 : For N=S1 To S2 : YC#(N)=YC#(N)-S# : Next N : End If 
+End If 
+If Key State(77)=True
+ If CM=1 : LY#=LY#-S#*SC#*Sqr(Timer)*8/K# : Locate 0,29 : Print "LX";LX# : Print "LY";LY# : End If 
+ If CM=2 : LYC#=LYC#-S# : End If 
+ If CM=3 or CM=4 : For N=S1 To S2 : Y#(N)=Y#(N)+S#*8 : Next N : End If 
+ If CM=5 or CM=6 : For N=S1 To S2 : YC#(N)=YC#(N)+S# : Next N : End If 
+End If 
+If Key State(79)=True
+ If CM=1 : LX#=LX#+S#*SC#*Sqr(Timer)*8/K# : Locate 0,29 : Print "LX";LX# : Print "LY";LY# : End If 
+ If CM=2 : LXC#=LXC#+S# : End If 
+ If CM=3 or CM=4 : For N=S1 To S2 : X#(N)=X#(N)-S#*8 : Next N : End If 
+ If CM=5 or CM=6 : For N=S1 To S2 : XC#(N)=XC#(N)-S# : Next N : End If 
+ If CM=7 : For N=S1 To S2 : MP#=MP#-OMP# : Next N : End If 
+ If CM=8 : For N=S1 To S2 : MP#=MP#-OMP#/50.0 : Next N : End If 
+End If 
+If Key State(78)=True
+ If CM=1 : LX#=LX#-S#*SC#*Sqr(Timer)*8/K# : Locate 0,29 : Print "LX";LX# : Print "LY";LY# : End If 
+ If CM=2 : LXC#=LXC#-S# : End If 
+ If CM=3 or CM=4 : For N=S1 To S2 : X#(N)=X#(N)+S#*8 : Next N : End If 
+ If CM=5 or CM=6 : For N=S1 To S2 : XC#(N)=XC#(N)+S# : Next N : End If 
+ If CM=7 : For N=S1 To S2 : MP#=MP#+OMP# : Next N : End If 
+ If CM=8 : For N=S1 To S2 : MP#=MP#+OMP#/50.0 : Next N : End If 
+End If 
+If Key State(41)=True
+ Add B,1
+ If B=2 : B=0 : End If 
+ Screen To Front 
+ Locate 0,30
+ If B=0 : Print "DrawBorderOff" : End If 
+ If B=1 : Print "DrawBorderON (OSD)" : J=0 : End If 
+ Repeat : Until Key State(41)=False
+End If 
+If Key State(42)=True
+ Add TA,1 : If TA=5 : TA=0 : End If 
+ Screen To Front : Locate 0,30
+ If TA=0 : Print "ZTrack Off" : End If 
+ If TA=1 : Print "ZTrack On" : End If 
+ If TA=2 : Print "ZLStretch" : LX#=-MX# : LY#=-MY# : End If 
+ If TA=3 : Print "ZTrack Range" : End If 
+ If TA=4 : Print "ZLStretch Range" : LX#=-MX# : LY#=-MY# : End If 
+ Repeat : Until Key State(42)=False
+End If 
+If Key State(58)=True
+ Repeat : Until Key State(58)=False
+ Screen To Front : Clear Key 
+ Input "Track on? ";TR
+ If TR=-1 : Print "Average" : LX#=TX# : LY#=TY# : End If 
+ Curs Off 
+ Repeat : Until Key State(67)=False
+End If 
+If Key State(26)=True
+ S#=S#/V#
+ Locate 0,30 : Print "Mouse speed";S#
+End If 
+If Key State(27)=True
+ S#=S#*V#
+ Locate 0,30 : Print "Mouse speed";S#
+End If 
+If Key State(74)=True
+ Repeat : Until Key State(74)=False
+ If MC=2 or MC=4 : D#(S1)=OD# : End If 
+ Screen To Front : Clear Key 
+ Input "Object? ";S1
+ If S1>O : S1=1 : End If : S2=S1
+ If MC=2
+  OD#=D#(S1)
+  For N=S1 To S2
+   D#(N)=0
+  Next N
+ End If 
+ Curs Off : Repeat : Until Key State(67)=False
+End If 
+If Key State(94)=True
+ Repeat : Until Key State(94)=False
+ Screen To Front : Clear Key 
+ Input "Object to? ";S2
+ If S2>O : S2=S1 : End If 
+ Curs Off : Repeat : Until Key State(67)=False
+End If 
+If Key State(90)=True
+ MP#=MP#/V#
+ Locate 0,30 : Print "Master power";MP#
+End If 
+If Key State(91)=True
+ MP#=MP#*V#
+ Locate 0,30 : Print "Master power";MP#
+End If 
+If Key State(92)=True
+ Add J,1 : If J=4 : J=0 : End If 
+ Repeat : Until Key State(92)=False
+End If 
+If Key State(93)=True
+ Add D,1 : If D=2 : D=0 : End If 
+ Repeat : Until Key State(93)=False
+End If 
+If Key State(95)=True
+ Add NS,1 : If NS=3 : NS=0 : End If 
+ Repeat : Until Key State(95)=False
+End If 
+If Key State(11)=True or Mouse Key=1
+ SC#=SC#*V#
+ Locate 0,30 : Print "Scale";SC#
+End If 
+If Key State(12)=True or Mouse Key=2
+ SC#=SC#/V#
+ Locate 0,30 : Print "Scale";SC#
+End If 
+If Key State(13)=True
+ If MC=6 : X Mouse=288 : Y Mouse=170 : End If 
+ LXC#=0 : LYC#=0
+End If 
+If Key State(65)=True
+ If MC=6 : X Mouse=288 : Y Mouse=170 : End If 
+ If TA=2 : LX#=-MX# : LY#=-MY#
+ Else : LX#=TX# : LY#=TY#
+ End If 
+ LXC#=0 : LYC#=0
+End If 
+If Key State(61)=True
+ X1#=X1#/V# : Y1#=Y1#/V#
+ Locate 0,29 : Print "X1";X1# : Print "Y1";Y1#
+End If 
+If Key State(62)=True
+ X1#=X1#*V# : Y1#=Y1#*V#
+ Locate 0,29 : Print "X1";X1# : Print "Y1";Y1#
+End If 
+If Key State(45)=True
+ X2#=X2#/V# : Y2#=Y2#/V#
+ Locate 0,29 : Print "X2";X2# : Print "Y2";Y2#
+End If 
+If Key State(46)=True
+ X2#=X2#*V# : Y2#=Y2#*V#
+ Locate 0,29 : Print "X2";X2# : Print "Y2";Y2#
+End If 
+If Key State(29)=True
+ X3#=X3#/V# : Y3#=Y3#/V#
+ Locate 0,29 : Print "X3";X3# : Print "Y3";Y3#
+End If 
+If Key State(30)=True
+ X3#=X3#*V# : Y3#=Y3#*V#
+ Locate 0,29 : Print "X3";X3# : Print "Y3";Y3#
+End If 
+If Key State(25)=True : If P=0 : P=1 : Else : P=0 : End If : Repeat : Until Key State(25)=False : End If 
+Return 
+'
+INFO:
+Locate 0,0
+If T=1
+ Print "Time: ";T#
+ Print "Scale: ";SC#
+ Print "TimeS: ";MP#
+ Print "LocateX: ";LX#
+ Print "LocateY: ";LY#
+ Print "Object(s): ";S1;S2; : Cmove -Len(Str$(S2)), : Print "-"
+ Print "Cursor: ";CM
+ Print "Mouse: ";MC
+End If 
+If T=2
+ Print "Attack:"
+ If U=0
+  For M=1 To O
+   Print M;": ";P#(M)
+  Next M
+ Else 
+  For M=1 To VS
+   If V(M)<>0
+    Print V(M);": ";P#(V(M))
+   End If 
+  Next M
+ End If 
+End If 
+If T=3
+ Print "Defence:"
+ If U=0
+  For M=1 To O
+   Print M;": ";D#(M)
+  Next M
+ Else 
+  For M=1 To VS
+   If V(M)<>0
+    Print V(M);": ";D#(V(M))
+   End If 
+  Next M
+ End If 
+End If 
+If T=4
+ Print "Power:"
+ If U=0
+  For M=1 To O
+   If D#(M)<>0
+    Print M;": ";P#(M)/D#(M)
+   Else 
+    Print M;": ";" Inf."
+   End If 
+  Next M
+ Else 
+  For M=1 To VS
+   If D#(V(M))<>0
+    Print V(M);": ";P#(V(M))/D#(V(M))
+   Else 
+    If V(M)<>0
+     Print V(M);": ";"Inf."
+    End If 
+   End If 
+  Next M
+ End If 
+End If 
+If T=5
+ Print "Position:"
+ If U=0
+  For M=1 To O
+   Print M;"x: ";X#(M)
+   Print M;"y: ";Y#(M)
+  Next M
+ Else 
+  For M=1 To VS
+   If V(M)<>0
+    Print V(M);"x: ";X#(V(M))
+    Print V(M);"y: ";Y#(V(M))
+   End If 
+  Next M
+ End If 
+End If 
+If T=6
+ Print "Distance:"
+ If U=0
+  For M=1 To O
+   Print M;": ";Sqr(((X#(M)-160)^2)+((Y#(M)-128)^2))
+  Next M
+ Else 
+  For M=1 To VS
+   If V(M)<>0
+    Print V(M);": ";Sqr(((X#(V(M))-160)^2)+((Y#(V(M))-128)^2))
+   End If 
+  Next M
+ End If 
+End If 
+If T=7
+ Print "Position diff.:"
+ If U=0
+  For M=1 To O
+   For N=1 To O
+    If N>M
+     Print M;N;"x: ";X#(N)-X#(M)
+     Print M;N;"y: ";Y#(N)-Y#(M)
+    End If 
+   Next N
+  Next M
+ Else 
+  For M=1 To VS Step 2
+   If V(M)<>0 and V(M+1)<>0
+    Print V(M);V(M+1);"x: ";X#(V(M+1))-X#(V(M))
+    Print V(M);V(M+1);"y: ";Y#(V(M+1))-Y#(V(M))
+   End If 
+  Next M
+ End If 
+End If 
+If T=8
+ Print "Distance diff.:"
+ If U=0
+  For M=1 To O
+   For N=1 To O
+    If N>M
+     Gosub DISTANCE
+     Print M;N;": ";F#
+    End If 
+   Next N
+  Next M
+ Else 
+  For L=1 To VS Step 2
+   If V(L)<>0 and V(L+1)<>0
+    M=V(L) : N=V(L+1) : Gosub DISTANCE
+    Print V(L);V(L+1);": ";F#
+   End If 
+  Next L
+ End If 
+End If 
+If T=9
+ Print "Angle:"
+ For M=1 To O
+  If Y#(M)-128<>0
+   AC#(M)=Atan((X#(M)-160)/(Y#(M)-128))
+  Else 
+   If X#(M)-160>0
+    AC#(M)=90
+   Else 
+    AC#(M)=-90
+   End If 
+  End If 
+  If Y#(M)-128>=0
+   AC#(M)=AC#(M)+180
+  End If 
+  If AC#(M)<0
+   AC#(M)=AC#(M)+360
+  End If 
+  If AC#(M)>=360
+   AC#(M)=AC#(M)-360
+  End If 
+ Next M
+ If U=0
+  For M=1 To O
+   Print M;": ";AC#(M)
+  Next M
+ Else 
+  For M=1 To VS
+   If V(M)<>0
+    Print V(M);": ";AC#(V(M))
+   End If 
+  Next M
+ End If 
+End If 
+If T=10
+ Print "Angle diff.:"
+ If U=0
+  For M=1 To O
+   For N=1 To O
+    If N<>M
+     Gosub ANGLE
+     Print M;N;": ";A#
+    End If 
+   Next N
+  Next M
+ Else 
+  For L=1 To VS Step 2
+   If V(L)<>0 and V(L+1)<>0
+    M=V(L) : N=V(L+1) : Gosub ANGLE
+    Print V(L);V(L+1);": ";A#
+   End If 
+  Next L
+ End If 
+End If 
+If T=11
+ Print "Angle diff.3P:"
+ If U=0
+  For M=1 To O
+   For N=1 To O
+    If N<>M
+     For L=1 To O
+      If L<>M and L>N
+       NO=N : N=L : Gosub ANGLE : A2#=A# : N=NO : Gosub ANGLE
+       AD#=Max(A#,A2#)-Min(A#,A2#)
+       If AD#>180
+        AD#=360-AD#
+       End If 
+       Print M;N;" ";M;L;": ";Abs(AD#)
+      End If 
+     Next L
+    End If 
+   Next N
+  Next M
+ Else 
+  For L=1 To VS-3 Step 3
+   If V(L)<>0 and V(L+1)<>0 and V(L+2)<>0
+    M=V(L) : N=V(L+2) : Gosub ANGLE : A2#=A#
+    M=V(L) : N=V(L+1) : Gosub ANGLE
+    AD#=Max(A#,A2#)-Min(A#,A2#)
+    If AD#>180
+     AD#=360-AD#
+    End If 
+    Print V(L);V(L+1);" ";V(L);V(L+2);": ";Abs(AD#)
+   End If 
+  Next L
+ End If 
+End If 
+If T=12
+ Print "Pressure:"
+ If U=0
+  For M=1 To O
+   Print M;": ";Sqr((XCE#(M)-XC#(M))^2+(YCE#(M)-YC#(M))^2)/MP#
+  Next M
+ Else 
+  For M=1 To VS
+   If V(M)<>0
+    Print V(M);": ";Sqr((XCE#(V(M))-XC#(V(M)))^2+(YCE#(V(M))-YC#(V(M)))^2)/MP#
+   End If 
+  Next M
+ End If 
+End If 
+If T=13
+ Print "Velocity:"
+ If U=0
+  For M=1 To O
+   Print M;"x: ";XC#(M)
+   Print M;"y: ";YC#(M)
+  Next M
+ Else 
+  For M=1 To VS
+   If V(M)<>0
+    Print V(M);"x: ";XC#(V(M))
+    Print V(M);"y: ";YC#(V(M))
+   End If 
+  Next M
+ End If 
+End If 
+If T=14
+ Print "Speed:"
+ If U=0
+  For M=1 To O
+   Print M;": ";(Sqr((XC#(M)^2)+(YC#(M)^2)))
+  Next M
+ Else 
+  For M=1 To VS
+   If V(M)<>0
+    Print V(M);": ";(Sqr((XC#(V(M))^2)+(YC#(V(M))^2)))
+   End If 
+  Next M
+ End If 
+End If 
+If T=15
+ Print "Direction:"
+ If U=0
+  For M=1 To O
+  Gosub ANGLED : If A#=360 : Print M;" -" : Else : Print M;": ";A# : End If 
+  Next M
+ Else 
+  For N=1 To VS
+   M=(V(N))
+   If M<>0
+   Gosub ANGLED : If A#=360 : Print M;" -" : Else : Print M;": ";A# : End If 
+   End If 
+  Next N
+ End If 
+End If 
+If T=16
+ Print "MiscStats:"
+ For M=1 To O : Gosub SPEED : If SP#<M# or M=1 : M#=SP# : N=M : End If : Next M
+ Print "Slowest:";N;" ";M#
+ For M=1 To O : Gosub SPEED : If SP#>M# or M=1 : M#=SP# : N=M : End If : Next M
+ Print "Fastest:";N;" ";M#
+ '  
+ For M=1 To O : Gosub SPEED : M#=M#+SP# : Next M
+ Print "TotalSpeed:";M# : M#=0
+ For M=S1 To S2 : Gosub SPEED : M#=M#+SP# : Next M
+ Print "Range";S1;S2;":";Int(M#*100000.0)/100000.0 : M#=0
+ For M=1 To O : M#=M#+XC#(M) : Next M
+ Print "TotalVeloX:";Int(M#*100000.0)/100000.0 : M#=0
+ For M=S1 To S2 : M#=M#+XC#(M) : Next M
+ Print "Range";S1;S2;":";Int(M#*100000.0)/100000.0 : M#=0
+ For M=1 To O : M#=M#+YC#(M) : Next M
+ Print "TotalVeloY:";Int(M#*100000.0)/100000.0 : M#=0
+ For M=S1 To S2 : M#=M#+YC#(M) : Next M
+ Print "Range";S1;S2;":";Int(M#*100000.0)/100000.0 : M#=0
+End If 
+Return 
+'
+'*********************** 
+KEY:
+'*********************** 
+'
+'[ ] Space bar        Input statistic mode     
+'[,] Keyboard comma   Input definable statistics       
+'[.] Keyboard period  Toggle (definable/all) values    
+'[0] Keypad 0         Nullify all object's orbit values  
+'[.] Keypad period    Nullify current object's orbit value       
+'[9] Keypad 9         Input Time speed 
+'[6] Keypad 6         Input Frame skip         
+'[3] Keypad 3         Input Scale      
+'[ESC]                Cancel mouse mode    
+'[F1 to F5]           Toggle (Flex/FlexRigid/Orbit/OrbitRigid/Locate) mouse
+'[F6 to F9]           Toggle cursor mode (Locate/LocateO/Object/ObjectO)     
+'[;] Semi Colon       Toggle border mode (None/Off Screen Delete (OSD))  
+'[#] Hash             Toggle ZoomTrack (None/Average/ZLStretch)
+'[/] Keyboard slash   Track object (-1=average -2=average object range)    
+'[]  Keypad enter     -
+'[-] Keypad minus     Select first/only object 
+'[+] Keypad plus      Select last object 
+'[[] LSquarebracket   Decrease mouse speed 
+'[]] RSquarebracket   Increase mouse speed 
+'[(] Keypad Lbracket  Decrease master power (time speed)   
+'[)] Keypad Rbracket  Increase master power (time speed) 
+'[/] Keypad slash     Toggle line (None/order/web/all) 
+'[]  Help key         Toggle number codes    
+'[-] Minus, Lmouse    Scale out      
+'[+] Plus, Rmouse     Scale in         
+'[\] Inverse slash    Stop scroll      
+'[]  Backspace        Reset position       
+'[7],[8]              (De/in)crease constant values      
+'[4],[5]              (De/in)crease magnetic values      
+'[1],[2]              (De/in)crease proportional values      
+'[]  Cursor keys      Move location/object(s)      
+'[p] P                Pause    
+'[]  Ctrl & '         Turn active on/off 
+'
+'  
+'Defence of 1 object=1/Defence of another
+'Attack  of 1 object=1/Attack  of another

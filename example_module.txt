@@ -1,0 +1,760 @@
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'''''''''''''''''''''''''''''' "Super Galactic Mecha Mincer" ''''''''''''''''''''''''''''''''
+'''''' Screen-shots can be seen at the page www.skytopia.com/project/magnet/mincer.html '''''
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'
+Set Buffer 400
+Set Double Precision 
+Goto TEMPLATE
+PRIMARY:
+'also try changing drips D# to .95 or maybe try reversing drip mincer rotate 
+'extra variables - add at end of print #1/input #1 lines:
+'if mt=502 then plus 50 to rotor pos. (after +ma#) 
+'
+'SG#(N),  BSC#,DM#,EX,EXL,BEXL,OB
+'
+SP=147
+SO=16
+'
+'mince 
+MDROPS=18 : MPARTS=80
+'MDROPS=1 : MPARTS=1 
+'
+'drips 
+'APARTS=1
+APARTS=900
+'
+'V1#=TriRotater, V2#=Chopper, V3#=MincerRotor
+V1#=2.0 : V2#=2.5 : V3#=0.8
+V4X#=10 : V4Y#=10
+GRAV#=0.015
+'
+MM=MDROPS*MPARTS
+O=SP+SO+MM+APARTS
+CL=32 : TR$="n" : T=0 : A$="l" : MP#=0.5
+S$="y" : D$="sd0:f/" : K#=2.0/MP# : F=0*K# : P=0
+
+'K#=1
+O1#=3 : O2#=32
+X1#=64 : Y1#=64
+X2#=0.35 : Y2#=0.35
+X3#=4 : Y3#=4
+X4#=X1# : Y4#=Y1#
+
+S1=0 : S2=0 : MC=3 : CM=1
+D=1 : B=1 : J=0 : W#=32
+NS=0 : PF=1 : TM=1 : TI=0
+SC#=2.5 : LX#=0 : LY#=0 : G#=0
+TR=0 : TA=0 : TRM=0
+VS=4 : V#=2.0^(1.0/8) : S#=1
+'
+'T#=-512.0 
+T#=0.0 : SC#=1.0
+'
+If T#<=-512 : MT=502 : End If 
+MT=0
+'
+Dim X#(O),Y#(O),XC#(O),YC#(O),D#(O),P#(O),S#(O),T#(O),C(O),V(VS),A(O)
+Dim XE#(O),YE#(O),XCE#(O),YCE#(O),AC#(O)
+Dim SG#(O)
+'
+Return 
+'
+PROPERTIES:
+For N=1 To O
+ 'All the codes: 10=Mincer, 11=MincerCollect, 12=MincerIce, 20=Mince, 30=Drips
+ '               1=SuperDrop, 2=TriRot, 3=Chopper, 4=MincRot, 5=Super smash 
+ '               6=Drip mixer, 7=OrbitCollector, 8=Explosion
+ If N<=SP : A(N)=10
+  If X#(N)>159 and Y#(N)>199 : A(N)=11 : End If 
+  If Y#(N)=250.5 and X#(N)<160.0 : A(N)=12 : End If 
+ End If 
+ If N>SP+SO and N<=SP+SO+MM : A(N)=20 : End If 
+ If N>SP+SO+MM and N<=SP+SO+MM+APARTS : A(N)=30 : End If 
+ If N=SP+1 : A(N)=1 : End If 
+ If N>SP+1 and N<=SP+4 : A(N)=2 : End If 
+ If N=SP+5 : A(N)=3 : End If 
+ If N>SP+5 and N<=SP+12 : A(N)=4 : End If 
+ If N=SP+13 : A(N)=5 : End If 
+ If N=SP+14 : A(N)=6 : End If 
+ If N=SP+15 : A(N)=7 : End If 
+ If N=SP+16 : A(N)=8 : End If 
+ 
+ 'If N=90 or N
+ '''''' 
+ 
+ T#(N)=-9999
+ 
+ D#(N)=1.0 : P#(N)=1.0
+ 
+ If A(N)=10 or A(N)=11 or A(N)=12
+  D#(N)=0 : T#(N)=-9999 : S#(N)=6
+  
+  
+  If N=36 or N=40 or N=42 or N=46 or N=13 or N=16 or N=18 or N=21
+   S#(N)=8
+  Else 
+   'part of mincer  
+   If A(N)=10
+   If X#(N)<160 and Y#(N)>107 : C(N)=2 : Else : C(N)=16 : End If 
+   End If 
+  End If 
+  If A(N)=12 : S#(N)=7 : C(N)=16 : End If 
+ End If 
+ 
+If A(N)=11 : If X#(N)>232 : S#(N)=4.0 : C(N)=16 : Else : S#(N)=5.0 : End If : End If 
+ 
+ '''''' 
+ If A(N)=20
+  S#(N)=4
+  T#(N)=((N-SP-SO-1)/MPARTS)*256-MT
+  C(N)=((((N-SP-SO-1)/MPARTS)+0) mod 2)+1
+  'If C(N)>=CL : C(N)=C(N)+1 : End If  
+ End If 
+ '''''
+ If A(N)=30
+  S#(N)=6 : YC#(N)=0.5
+  T#(N)=(N-SP-SO-MM)*5-MT
+  C(N)=3+16
+  D#(N)=0.93
+  'YC#(N)=0
+ End If 
+ '''''
+ If A(N)=1 : X#(N)=260.0 : Y#(N)=60.0 : D#(N)=0.0 : S#(N)=20 : C(N)=2 : End If 
+ If A(N)=2 : D#(N)=0.0 : S#(N)=8 : C(N)=13 : End If 
+ If A(N)=3 : D#(N)=0.0 : S#(N)=9 : End If 
+ If A(N)=4 : D#(N)=0.0 : C(N)=2+16 : S#(N)=6 : If N=SP+6 or N=SP+12 : S#(N)=9 : P#(N)=2.0 : C(N)=7+16 : End If : End If 
+ If A(N)=5 : D#(N)=0.0 : C(N)=2 : S#(N)=25 : T#(N)=1600.0 : X#(N)=240 : Y#(N)=-22 : XC#(N)=-2.5 : YC#(N)=2.5 : P#(N)=32 : End If 
+ If A(N)=6 : D#(N)=1.0 : C(N)=2 : S#(N)=8 : T#(N)=0.0-MT : X#(N)=275 : Y#(N)=40 : YC#(N)=1.0 : End If 
+ If A(N)=7 : X#(N)=285 : Y#(N)=160 : S#(N)=8 : D#(N)=0.0 : C(N)=5 : End If 
+ If A(N)=8 : X#(N)=260.0 : Y#(N)=60.0 : S#(N)=1 : D#(N)=0.0 : C(N)=5 : T#(N)=99999 : End If 
+ 
+ 'If A(N)=20 : Print N;C(N) : Wait Key : End If   
+ 'Print N;T#(N);T#(N)-T#(N-1) : Wait Key  
+Next N
+Return 
+'
+POSITION:
+For N=1 To O
+ REPOS:
+ '* 
+ 
+ If N>SP+SO and N<=SP+SO+MPARTS
+  VA#=Rnd(360)
+  VS#=Sqr(Rnd((64)^2.0))
+  X#(N)=Sin(VA#)*VS#*0.3+64 : Y#(N)=Cos(VA#)*VS#+32
+  '
+  O#=5
+  For M=SP+SO+1 To SP+SO+MPARTS
+   If Sqr(((X#(N)-X#(M))^2)+((Y#(N)-Y#(M))^2))<O# and M<>N
+    Goto REPOS
+   End If 
+  Next M
+  'if pass spacing test (above), below sets other drops to same position:  
+  If MDROPS>1
+   For L=1 To MDROPS-1
+    X#(N+(L*MPARTS))=X#(N)
+    Y#(N+(L*MPARTS))=Y#(N)
+   Next L
+  End If 
+ End If 
+ '
+ If A(N)=30
+  If N mod 4=0 : X#(N)=244.0 : End If 
+  If N mod 4=1 : X#(N)=252.0 : End If 
+  If N mod 4=2 : X#(N)=260.0 : End If 
+  If N mod 4=3 : X#(N)=268.0 : End If 
+  
+  Y#(N)=0.0
+ End If 
+ '* 
+Locate 0,0 : Print N;"/";O : If CL=2 : Ink 1 : Else : Ink C(N) : End If 
+ 'help   -1 or -0?
+If N>SP : Plot X#(N)+(((N-SP-SO-1)/MPARTS))*40,Y#(N) : Else : Plot X#(N),Y#(N) : End If 
+Next N
+
+Return 
+'
+PAL:
+
+Screen Open 3,320,256,CL,Lowres : Flash Off : Load Iff "sd0:mincerD" : N=0
+For X=0 To 319 : For Y=0 To 255
+  If N<O and Point(X,Y)>0 : N=N+1
+   X#(N)=X+0.5 : Y#(N)=Y+0.5 : C(N)=Point(X,Y)
+  End If 
+  Plot X,Y
+Next Y : Next X
+Locate 0,0 : Print N;" pixels" : Wait 5
+
+For N=0 To 2
+ Screen Open N,320,256,CL,Lowres : Clip 0,0 To 320,256
+ Paper 0 : Cls : Flash Off : Curs Off 
+ '
+ ''Palette $0,$FFF,$88F,$F00,$6D3,$80F,$AF,$F40 
+ 
+ 
+ Palette $0,$606,$617,$628,$749,$75A,$76B,$78D,$79E,$6AE,$4BF,$2CF,$5DF,$9EF,$CFF,$FFF,$A0F,$604,$716,$927,$A27,$B38,$C49,$D5A,$E7B,$F8C,$F9D,$FAE,$FCE,$FDF,$FEF,$FFF
+ 
+ 'Palette $FFF,$CFF,$9EF,$5DF,$2CF,$4BF,$6AE,$79E,$78D,$76B,$75A,$749,$628,$617,$606,$0 
+ 'Palette $0,$FFF,$88F,$F00,$6D3,$80F,$AF,$F40,$80,$FFF,$88F,$F00,$6D3,$80F,$AF,$F40
+ 
+ 
+ 
+If CL=2 : Colour 0,$0 : Colour 1,$FFF : Pen 1 : Else : Pen 2 : End If 
+ 'Unquote line to test colours
+ 'For M=1 To CL-1 : Pen M : Locate 0,M : Print "ink";M : Next M 
+ '
+Next N
+Return 
+'
+MAGNET:
+For M=1 To O
+ If T#(M)<=T#
+  If D#(M)<>0
+   For N=1 To O
+    If T#(N)<=T#
+     If N<>M
+      '      
+      If A(N)=7 and A(M)=30
+       Gosub DISTANCE
+       If F#<50.0
+        Gosub ANGLE
+        XCE#(M)=XCE#(M)+ZX#/(6+F#^0.6)*2.0^1
+        YCE#(M)=YCE#(M)+ZY#/(6+F#^0.6)*2.0^1
+       End If 
+      End If 
+      
+      If A(N)=6 and A(M)=30
+       ' and TYU=1
+       Gosub DISTANCE
+       If F#>0.0 and F#<50.0
+        Gosub ANGLE
+        'push down 5.4 one? (hmmm.....)  
+        '3: Magnetic Attract 
+        XE#(M)=XE#(M)+ZX#/F#^2*2^5.4
+        YE#(M)=YE#(M)+ZY#/F#^2*2^5.4
+        XCE#(M)=XCE#(M)+ZX#/F#^2*2^6.2
+        YCE#(M)=YCE#(M)+ZY#/F#^2*2^6.2
+        '
+        '4: Magnetic Repel:
+        XE#(M)=XE#(M)-ZX#/F#^3*2^8.4
+        YE#(M)=YE#(M)-ZY#/F#^3*2^8.4
+        XCE#(M)=XCE#(M)-ZX#/F#^3*2^9.2
+        YCE#(M)=YCE#(M)-ZY#/F#^3*2^9.2
+       End If 
+      End If 
+      If A(N)=1 and A(M)=30
+       ' and TYU=1
+       Gosub DISTANCE
+       If F#>0.0 and F#<50.0
+        Gosub ANGLE
+        '3: Magnetic Attract 
+        XE#(M)=XE#(M)+ZX#/F#^2*2^5.4
+        YE#(M)=YE#(M)+ZY#/F#^2*2^5.4
+        XCE#(M)=XCE#(M)+ZX#/F#^2*2^6.2
+        YCE#(M)=YCE#(M)+ZY#/F#^2*2^6.2
+        'pushed up 1.9 
+        '4: Magnetic Repel:
+        XE#(M)=XE#(M)-ZX#/F#^3*2^9.5
+        YE#(M)=YE#(M)-ZY#/F#^3*2^9.5
+        XCE#(M)=XCE#(M)-ZX#/F#^3*2^10.5
+        YCE#(M)=YCE#(M)-ZY#/F#^3*2^10.5
+       End If 
+      End If 
+      '
+      If A(N)=30 and A(M)=30
+       Gosub DISTANCE
+       If F#>0.0 and F#<32.0
+        Gosub ANGLE
+        'not good at 2^4 and 2^7.5 for some reason 
+        '3: Magnetic Attract 
+        XE#(M)=XE#(M)+ZX#/F#^3*2^5
+        YE#(M)=YE#(M)+ZY#/F#^3*2^5
+        XCE#(M)=XCE#(M)+ZX#/F#^3*2^5
+        YCE#(M)=YCE#(M)+ZY#/F#^3*2^5
+        '
+        '4: Magnetic Repel:
+        XE#(M)=XE#(M)-ZX#/F#^4*2^8.5
+        YE#(M)=YE#(M)-ZY#/F#^4*2^8.5
+        XCE#(M)=XCE#(M)-ZX#/F#^4*2^8.5
+        YCE#(M)=YCE#(M)-ZY#/F#^4*2^8.5
+       End If 
+      End If 
+      '
+      If A(N)=20 and A(M)=20
+       Gosub DISTANCE
+       'was before >2.0 not >0.0  
+       If F#>0.0 and F#<64.0
+        Gosub ANGLE
+        '3: Magnetic Attract 
+        XE#(M)=XE#(M)+ZX#/F#^2*X2#
+        YE#(M)=YE#(M)+ZY#/F#^2*Y2#
+        XCE#(M)=XCE#(M)+ZX#/F#^2*X2#
+        YCE#(M)=YCE#(M)+ZY#/F#^2*Y2#
+        '
+        '4: Magnetic Repel:
+        XE#(M)=XE#(M)-ZX#/F#^3*X3#
+        YE#(M)=YE#(M)-ZY#/F#^3*Y3#
+        XCE#(M)=XCE#(M)-ZX#/F#^3*X3#
+        YCE#(M)=YCE#(M)-ZY#/F#^3*Y3#
+       End If 
+      End If 
+      
+      If A(N)=11
+       Gosub DISTANCE
+       If F#>0.0 and F#<64.0
+        Gosub ANGLE
+        XE#(M)=XE#(M)-ZX#/F#^4*X1#*24
+        YE#(M)=YE#(M)-ZY#/F#^4*Y1#*24
+        XCE#(M)=XCE#(M)-ZX#/F#^4*X1#*8
+        YCE#(M)=YCE#(M)-ZY#/F#^4*Y1#*8
+       End If 
+      End If 
+      If A(N)=3
+       Gosub DISTANCE
+       If F#>0.0 and F#<64.0
+        Gosub ANGLE
+        XE#(M)=XE#(M)-ZX#/F#^3*X1#*2
+        YE#(M)=YE#(M)-ZY#/F#^3*Y1#*2
+        XCE#(M)=XCE#(M)-ZX#/F#^3*X1#*2
+        YCE#(M)=YCE#(M)-ZY#/F#^3*Y1#*2
+       End If 
+      End If 
+      'mincer rot      
+      If A(N)=4
+       Gosub DISTANCE
+       If F#>0.0 and F#<64.0
+        Gosub ANGLE
+        XE#(M)=XE#(M)-ZX#/F#^3*X4#
+        YE#(M)=YE#(M)-ZY#/F#^3*Y4#
+        XCE#(M)=XCE#(M)-ZX#/F#^3*X4#
+        YCE#(M)=YCE#(M)-ZY#/F#^3*Y4#
+       End If 
+      End If 
+
+      If A(N)=10 or A(N)=12 or A(N)=2 or A(N)=5
+       Gosub DISTANCE
+       If F#>0.0 and F#<64.0
+        Gosub ANGLE
+        XE#(M)=XE#(M)-ZX#/F#^3*X1#
+        YE#(M)=YE#(M)-ZY#/F#^3*Y1#
+        XCE#(M)=XCE#(M)-ZX#/F#^3*X1#
+        YCE#(M)=YCE#(M)-ZY#/F#^3*Y1#
+       End If 
+      End If 
+      
+     End If 
+    End If 
+   Next N
+  End If 
+  If A(M)=20 or A(M)=30
+   YE#(M)=YE#(M)+GRAV#*MP#
+   YCE#(M)=YCE#(M)+GRAV#*MP#
+  End If 
+  
+  XE#(M)=XE#(M)+XCE#(M)*MP#
+  YE#(M)=YE#(M)+YCE#(M)*MP#
+  '
+ End If 
+Next M
+Return 
+EXTRA:
+
+If T#>=4726 : X4#=X4#*1.002 : Y4#=Y4#*1.002 : End If 
+
+'Def Fn X(N#)=((N#-160+LX#)/SC#)+160 
+'Def Fn Y(N#)=((N#-128+LY#)/SC#)+128 
+'Ink 3 : Bar( Fn X(160-60)), Fn Y(128-60) To( Fn X(160+60)), Fn Y(128+60)
+
+'Increase time accuracy for big boulder bash:
+If T#>=1656 and T#<1740 : MP#=0.25 : K#=2.0/MP# : End If 
+If T#>=1740 and T#<1742 : MP#=0.5 : K#=2.0/MP# : End If 
+'and crunchy parts:
+If T#>=2468 and T#<2512 : MP#=0.25 : K#=2.0/MP# : End If : If T#=2512 : MP#=0.5 : K#=2.0/MP# : End If 
+If T#>=2700 and T#<2780 : MP#=0.25 : K#=2.0/MP# : End If : If T#=2780 : MP#=0.5 : K#=2.0/MP# : End If 
+If T#>=2932 and T#<3082 : MP#=0.25 : K#=2.0/MP# : End If : If T#=3082 : MP#=0.5 : K#=2.0/MP# : End If 
+If T#>=3178 and T#<6178 : MP#=0.25 : K#=2.0/MP# : End If : If T#=5178 : MP#=0.5 : K#=2.0/MP# : End If 
+'
+For N=1 To O
+ 'collect magnets off border: 
+ If T#(N)<=T#
+  If A(N)=20 or A(N)=30
+   If X#(N)>330 or X#(N)<-10 or(A(N)=30 and Y#(N)<-32)
+    If A(N)=20
+     X#(N)=48.0+((OB mod 5)*8.0) : Add OB,1
+     If T#>=1656 and T#<1700
+      T#(N)=99999
+     End If 
+    Else 
+    X#(N)=252 : T#(N)=99999 : EX=EX+1 : End If 
+    XC#(N)=0 : YC#(N)=0 : Y#(N)=0
+   End If 
+  End If 
+ End If 
+ '  
+ 'work2 
+ If A(N)=30 and X#(N)>232 and Y#(N)>128
+  C(N)=3
+  If XC#(N)>2.0 : XC#(N)=XC#(N)/1.1 : End If 
+  If YC#(N)>2.0 : YC#(N)=YC#(N)/1.1 : End If 
+ End If 
+ 
+ 'triTor positioning: 
+ If A(N)=2
+  X#(N)=Sin((360.0/3.0)*(N mod 3)-(T#*V1#))*30+160
+  Y#(N)=Cos((360.0/3.0)*(N mod 3)-(T#*V1#))*30+60
+ End If 
+ 'chopper positioning:
+ If A(N)=3
+  'Y#(N)=((Cos(V2#*2*T#))+1.0)*16.0+210.0
+  Y#(N)=(Abs(Cos(V2#*T#))^4.0)*50.0+200.0
+  X#(N)=120.0
+ End If 
+ 'Rotor positioning:
+ If A(N)=4
+  If T#<3600
+   X#(N)=64+(Sin(V3#*T#+MA#))*(N-(SP+9+(Cos(V3#*T#*2.5)*2.5)))*V4X#
+   Y#(N)=164+(Cos(V3#*T#+MA#))*(N-(SP+9+(Cos(V3#*T#*2.5)*2.5)))*V4Y#
+   'MA#=MA#+2 
+  Else 
+   '"best version" (change to sp-48 for super fast) 
+   X#(N)=64+(Sin(V3#*T#+MA#+((T#-3600)*(N-(SP+0))*0.07)))*(N-(SP+9+(Cos(V3#*T#*2.5)*2.5)))*V4X#
+   Y#(N)=164+(Cos(V3#*T#+MA#+((T#-3600)*(N-(SP+0))*0.07)))*(N-(SP+9+(Cos(V3#*T#*2.5)*2.5)))*V4Y#
+   'similar version:
+   'X#(N)=64+(Sin(V3#*T#+MA#-((T#-3600)*(N-(SP+16))*0.07)))*(N-(SP+9+(Cos(V3#*T#*2.5)*2.5)))*V4X# 
+   'Y#(N)=164+(Cos(V3#*T#+MA#-((T#-3600)*(N-(SP+16))*0.07)))*(N-(SP+9+(Cos(V3#*T#*2.5)*2.5)))*V4Y#
+  End If 
+ End If 
+ 'Drip mixer positioning: 
+ 'standard=*1.5 , + the speed of the exploded drips:
+ If A(N)=6
+  'X#(N)=Sin(T#*(1.2+(EX/32.0))+Y#(N))*20.0+260.0
+  'Y#(N)=Cos(T#*(1.2+(EX/32.0))+Y#(N))*20.0+60.0 
+  
+  X#(N)=Sin(DM#+Y#(N))*20.0+260.0
+  Y#(N)=Cos(DM#+Y#(N))*20.0+60.0
+  If BEXL=0 : DM#=DM#+(MP#*(1.2+(EX/32.0))) : End If 
+  If BEXL=1 : DM#=DM#+(MP#*(1.2+(EX/16.0))) : End If 
+  If BEXL>=2 : DM#=DM#-(MP#*(2.4+(EX/32.0))) : End If 
+ End If 
+ 
+ 'Explosion:
+ If T#(N)<=T#
+  If A(N)=8
+   If T#-T#(N)=2 : S#(N)=9 : End If 
+   If T#-T#(N)=4 : S#(N)=15 : End If 
+   If T#-T#(N)=6 : S#(N)=22 : End If 
+   If T#-T#(N)=8 : S#(N)=28 : End If 
+   If T#-T#(N)=10 : S#(N)=33 : End If 
+   If T#-T#(N)=12 : S#(N)=37 : End If 
+   If T#-T#(N)>=14 and T#-T#(N)<27 : S#(N)=27+(T#-T#(N)) : End If 
+   If T#-T#(N)>=27 : If SHR=0 : S#(N)=41+((T#-T#(N))/2.0) : End If : End If 
+   
+  End If 
+ End If 
+ 
+Next N
+
+Return 
+DISPLAY:
+
+'Zoom intro display: 
+If T#<0
+ If T#>=-512.0
+  If T#<=-452
+   MP#=0.5-((-452-T#)/128.0)
+  Else 
+   If T#<-448 : T#=Int(T#)+1 : End If : MP#=0.5
+  End If 
+ End If 
+ If T#=-512 and C<200*4 : MP#=0 : End If 
+ 
+ If T#<-512
+  LX#=Sin(-512*-512/256.0)*Abs(-512/4)
+  LY#=Cos(-512*-512/256.0)*Abs(-512/4)
+  SC#=(Abs(-512/200.0)+1.0)^(Sin(Abs(-512)*1))
+ Else 
+  LX#=Sin(T#*T#/256.0)*Abs(T#/4)
+  LY#=Cos(T#*T#/256.0)*Abs(T#/4)
+  SC#=(Abs(T#/200.0)+1.0)^(Sin(Abs(T#)*1))
+ End If 
+ '
+ 
+ Ink 17 : Bar 0,0 To 320,256
+ For N=1 To 4
+  If N=1 : GG#=3.2 : GI=19 : GS#=0.4 : End If 
+  If N=2 : GG#=2.0 : GI=21 : GS#=0.7 : End If 
+  If N=3 : GG#=1.6 : GI=24 : GS#=1.0 : GE#=1.0 : End If 
+  If N=4 : GG#=1.6 : GI=22 : GS#=1.0 : GE#=0.0 : End If 
+  Ink GI : G#=GG#
+  SX#=160.0+LX#/SC#*GS# : SG#=160.0/SC#/G# : N#=SX#-Int(SX#/SG#)*SG#
+  While N#<320 : Draw N#+0.5-GE#,0 To N#+0.5-GE#,255 : N#=N#+160.0/SC#/G# : Wend 
+  SX#=128.0+LY#/SC#*GS# : SG#=128.0/SC#/G# : N#=SX#-Int(SX#/SG#)*SG#
+  While N#<256 : Draw 0,N#+0.5-GE# To 319,N#+0.5-GE# : N#=N#+128.0/SC#/G# : Wend : G#=0
+ Next N : G#=0
+ 
+ For N=1 To 4
+  Def Fn X(N#)=((N#-160+LX#)/SC#*(1+((5-N)/10.0)))+160
+  Def Fn Y(N#)=((N#-128+LY#)/SC#*(1+((5-N)/10.0)))+128
+  Ink 10-(N*2) : Bar( Fn X(0-0)), Fn Y(0-10) To( Fn X(320+0)), Fn Y(256+10)
+ Next N
+ Def Fn X(N#)=((N#-160+LX#)/SC#)+160
+ Def Fn Y(N#)=((N#-128+LY#)/SC#)+128
+ Ink 0 : Bar( Fn X(0-0)), Fn Y(0-10) To( Fn X(320+0)), Fn Y(256+10)
+Else 
+ SC#=1.0
+End If 
+
+If T#=-512
+ If(C/32.0) mod 2=0
+  Ink 15 : Text 82,170,"PAUSE"
+ End If 
+End If 
+'
+''''''''''''''''Counters:  
+'''''''''''''''''''''''''
+'Collector counter:
+BCC=0
+For M=1 To O
+ If X#(M)>160 and X#(M)<230 and Y#(M)>185 and Y#(M)<250
+  BCC=BCC+1
+ End If 
+Next M
+'0.05 is speed of collector cycler 
+BSC#=BSC#+0.035*BCC
+Ink 8,0 : Paper 0
+Def Fn X(N#)=((N#-160+LX#)/SC#)+160
+Def Fn Y(N#)=((N#-128+LY#)/SC#)+128
+'
+If T#>=0
+ Text( Fn X(156)),( Fn Y(234)),Mid$(Str$(BCC),2,1)
+ Text( Fn X(156)),( Fn Y(244)),Mid$(Str$(BCC),3,1)
+ Text( Fn X(156)),( Fn Y(254)),Mid$(Str$(BCC),4,1)
+End If 
+'
+BCC=0
+'tip: use the spare 0 magnet for quick distance measures etc.
+N=0 : X#(N)=260 : Y#(N)=60
+For M=1 To O
+ Gosub DISTANCE
+ If F#<50 and A(M)=30
+  BCC=BCC+1
+ End If 
+Next M
+DC=BCC
+'
+
+'Mince counter:
+BCC=0
+N=0 : X#(N)=64 : Y#(N)=164
+For M=1 To O
+ Gosub DISTANCE
+ If F#<50 and A(M)=20
+  BCC=BCC+1
+ End If 
+Next M
+Ink 4 : Draw 2,20 To 2,240 : Draw 2,240 To 10,240 : Draw 10,20 To 10,240
+Ink 6 : Draw 3,20 To 3,239 : Draw 3,239 To 9,239 : Draw 9,20 To 9,239
+Ink 8 : Draw 4,20 To 4,238 : Draw 4,238 To 8,238 : Draw 8,20 To 8,238
+Ink 13
+Draw 5,237 To 5,237-(BCC/5)
+Draw 6,237 To 6,237-(BCC/5)
+Draw 7,237 To 7,237-(BCC/5)
+If T#>=0
+ 'Ink 8 : Text( Fn X(47)),( Fn Y(226)),Str$(BCC)
+ Ink 8 : Text( Fn X(-5)),( Fn Y(252)),Str$(BCC)
+End If 
+'
+'explosion gauge 
+Ink 3
+Draw 309,0 To 309,115
+Draw 309,120 To 314,115
+Draw 314,0 To 314,115
+Ink 28 : Draw 310,0 To 310,EX/2
+Ink 26 : Draw 311,0 To 311,EX/2
+Ink 7 : Draw 312,0 To 312,EX/2
+Ink 5 : Draw 313,0 To 313,EX/2
+'
+'Pressure gauge
+Ink 13 : Draw 316,0 To 316,DC
+Ink 7 : Draw 317,0 To 317,DC
+Ink 9 : Draw 318,0 To 318,DC
+Ink 6 : Draw 319,0 To 319,DC
+
+If EX>200 : Ink T#*6 : Else : Ink 9 : End If 
+Text 264,126,"EXPLODE"
+If EX>120 and EX<200
+ If T#/16.0 mod 2=0 : Ink 9 : Text 264,126,"EXPLODE" : End If 
+ If T#/16.0 mod 2=1 : Ink 14 : Text 256,126,"!EXPLODE!" : End If 
+End If 
+'workinge
+If EXL=1 : EX=EX-2
+ If T#-T#(SP+16)=10 : S#(148)=23 : End If 
+ If T#-T#(SP+16)=12 : S#(148)=25 : End If 
+ If T#-T#(SP+16)=14 : S#(148)=29 : End If 
+ If T#-T#(SP+16)=16 : S#(148)=33 : End If 
+ If T#-T#(SP+16)=18 : S#(148)=36 : End If 
+ If T#-T#(SP+16)=20 : S#(148)=38 : End If 
+ If T#-T#(SP+16)=22 : S#(148)=39.3 : End If 
+ If T#-T#(SP+16)>22 : S#(148)=20+(EX/12.0) : End If 
+End If 
+'If EXL=0 and T#>3600 and((T# mod 8)=0) : EX=EX+1.0 : End If 
+'
+'cut out the "if exl=0" if for original explosion  (not above line)
+If EX>240
+ If EXL=0 : EX=440 : End If 
+ EXL=1 : T#(SP+SO)=T#
+ If T#/16.0 mod 2=0 : Ink 7 : Text 264,134,"WARNING" : End If 
+ If T#/16.0 mod 2=1 : Ink 12 : Text 256,134,"!WARNING!" : End If 
+End If 
+If EX<=0 : EX=0 : EXL=0 : End If 
+
+'quote line when proper: 
+'If EXL=0 : EX=EX+1 : End If 
+
+For M=0 To O
+ 'to get smasher drawn first
+ If M=153 : M=1 : End If 
+ If M=152 : M=153 : End If 
+ If M=0 : M=152 : End If 
+If CL=2 : Ink 1,0 : Else : Ink C(M),0 : End If 
+ '  
+ If T#(M)<=T#
+  'Super grow technique: 
+  If A(M)<>5 and A(M)<>8
+   SG#(M)=((T#-T#(M))/8.0)+0.0
+   If SG#(M)>S#(M) : SG#(M)=S#(M) : End If 
+  Else 
+   SG#(M)=S#(M)
+  End If 
+  
+  X#=((X#(M)-160+LX#)/SC#)+160 : Y#=((Y#(M)-128+LY#)/SC#)+128 : Z#=SG#(M)/SC#
+  If(B<>1 or(X#>=-Z# and X#<=Z#+319 and Y#>=-Z# and Y#<=Z#+255))
+   On Error Goto PIXEL
+   '* 
+   If(D=1 and CL<>2)
+    ' or A(M)=1 or A(M)=30 or A(M)=6 or A(M)=7 or A(M)=5 or A(M)=8 
+    '  and(A(M)=30 or A(M)=5)
+    
+    ''''If M>90 : Ink 3 : Circle X#+0.5,Y#+0.5,Z# : End If 
+    ''If M>82 and M<=89 : Ink 3 : Circle X#+0.5,Y#+0.5,Z#-1 : End If 
+    DX#=-Z#+0.5
+    '
+    If A(M)=10 or A(M)=12 : FC#=-8 : FO#=0 : FP#=1
+     If M=36 or M=40 or M=42 or M=46 or M=13 or M=16 or M=18 or M=21
+      FO#=Sin(T#*8.0)*3
+      'For old glow effect:       FP#=Sin(C)+1 
+     End If 
+     If A(M)=12 : FP#=Sin((T#*4.0)+((X#(M)-50.0)*4.0))+1 : End If 
+     If A(M)=10 and X#(M)<160 and Y#(M)>107 : FO#=-3 : End If 
+    End If 
+    '      
+    If A(M)=11 : FC#=8 : FO#=0 : FP#=1 : End If 
+    If A(M)=11 and X#(M)<232.0 : FO#=((X#(M)-160.0)/10.0)+BSC# : End If 
+    If A(M)=20 : FC#=-3.0 : FO#=-11.0 : FP#=1 : End If 
+    If A(M)=30 : FC#=-15 : FO#=0 : FP#=0.6 : End If 
+    If A(M)=1 : FO#=0
+     If EXL=0
+      FC#=-12 : FP#=0.5*(1.2^(Sin(T#*DC/24.0)*(DC/24.0)))
+     Else 
+      FC#=-EX : FP#=0.5
+     End If 
+    End If 
+    If A(M)=2 : FC#=12 : FO#=0 : FP#=1 : End If 
+    If A(M)=3 : FC#=-13 : FO#=(C/16)*0 : FP#=1 : End If 
+   If A(M)=4 : FC#=4 : FP#=1 : If M=SP+6 or M=SP+12 : FO#=Abs(Sin(C*2)*5) : Else : FO#=0 : End If : End If 
+    If A(M)=5 : FC#=15 : FO#=-T#/2.0 : FP#=1.0 : End If 
+    If A(M)=7 : FC#=1 : FO#=(T#/4) mod 16 : FP#=1.0 : End If 
+    If A(M)=8
+     If T#-T#(M)=2 : FC#=-11 : FP#=0.3 : FO#=0 : End If 
+     If T#-T#(M)=4 : FC#=-12 : FP#=0.6 : FO#=0 : End If 
+     If T#-T#(M)=6 : FC#=-13 : FP#=1.2 : FO#=0 : End If 
+     If T#-T#(M)=8 : FC#=-14 : FP#=1.8 : FO#=0 : End If 
+     If T#-T#(M)=10 : FC#=-14 : FP#=3.0 : FO#=0 : End If 
+     If T#-T#(M)>10
+      'FP#=3.0-((T#-(T#(M)+10))/40.0)
+      FC#=-15 : FO#=0
+      If BEXL=0 : FP#=6.0^(((40.0-(T#-(T#(M)+10))))/40.0) : End If 
+      If BEXL>=1 : FP#=6.0^(((80.0-(T#-(T#(M)+10))))/80.0) : End If 
+      If FP#<=0.06
+       SHR=1
+       If FP#<=0.015
+        S#(M)=S#(M)/1.04
+       End If 
+       If S#(M)<4 : T#(M)=99999 : SHR=0 : Add BEXL,1 : End If 
+      End If 
+     End If 
+    End If 
+    '    
+    Repeat 
+     If A(M)=12 or(A(M)=11 and X#(M)>232.0)
+      'square
+      DY#=Int(Sin(Acos(DX#/Z#^1.5))*Z#+0.5)
+     Else 
+      'circular
+      DY#=Int(Sin(Acos(DX#/Z#))*Z#+0.5)
+     End If 
+     DYU#=-DY# : DX#=DX#+1.0
+     While DY#>DYU#
+      '
+      ND#=Sqr(((DX#-1.0)^2.0)+((DY#-0.5)^2.0))
+      CP=(Int((ND#^FP#/Z#^FP#)*FC#))+FO#
+      CP=CP-(Int(CP/(16-1))*(16-1))
+      If CP<0 : CP=CP+16-1 : End If : Inc CP
+      CI=Point(DX#+X#-0.5,Y#+DY#) mod 16
+      '      
+      ' ------------     
+      If A(M)=10 or A(M)=11 or A(M)=12 : I=CI+CP : End If 
+      If A(M)=20 : I=CI+C(M) : End If 
+      If A(M)=30 : I=CP : End If 
+      If A(M)=1 : I=CI+CP : End If 
+      If A(M)=2 : I=CI+CP : End If 
+      If A(M)=3 : I=CP : End If 
+      If A(M)=4 : I=CI+CP : End If 
+      If A(M)=5 : I=CI+CP : End If 
+      'If A(M)=5 : I=CP : End If 
+      'If A(M)=5 : I=(CL-CP)-CI : End If 
+      If A(M)=7 : I=CP : End If 
+      If A(M)=8 : I=CI+CP : End If 
+      
+      'If A(M)=20 : I=(CL-CP)-CI : End If  
+      
+      '^^^^^^^^^^^^^^^^
+      
+      'Colour clip off       
+      'If A(M)<>5
+      If I>=16-1 : I=16-1 : End If 
+      If I<=1 and CI>0 : I=1 : End If 
+      'End If  
+      '
+      'Optional 'merging' of circles (Unquote 1 'If' and End if)           
+      If I>CI or A(M)<>30
+      If C(M)>=16 : Ink I+16 : Else : Ink I : End If 
+       Plot DX#+X#-0.5,Y#+DY#
+      End If 
+      DY#=DY#-1.0
+     Wend 
+    Until DX#>=Z#
+   Else 
+    Circle X#+0.5,Y#+0.5,Z#
+    'Plot X#+0.5,Y#+0.5
+   End If 
+   '*   
+   Gosub XDRW
+  End If 
+ End If 
+Next M
+'
+Ink 20 : Text 284,244,"TIME"
+Ink 24 : If T#<0
+ Text 272,254,Str$(T#)
+Else 
+ Text 280,254,Str$(T#)
+End If 
+
+'Locate 36,29 : Print "TIME" 
+'Locate 36,30 : Print Str$(T#);
+
+Return 
+'''''' 
